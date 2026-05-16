@@ -2,13 +2,22 @@ import {
   useState,
 } from "react";
 
+import {
+  Link,
+} from "react-router-dom";
+
 import API from "../services/api";
+
+import {
+  useTheme,
+} from "../context/ThemeContext";
 
 export default function ResumeBuilder() {
 
-  const [resume,
-    setResume] =
-    useState(null);
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [loading,
     setLoading] =
@@ -33,15 +42,6 @@ export default function ResumeBuilder() {
     setAiResume] =
     useState("");
 
-  const handleUpload = (
-    e
-  ) => {
-
-    setResume(
-      e.target.files[0]
-    );
-  };
-
   const handleChange = (
     e
   ) => {
@@ -54,23 +54,6 @@ export default function ResumeBuilder() {
         e.target.value,
     });
   };
-
-  const handleSubmit =
-    () => {
-
-      if (!resume) {
-
-        alert(
-          "Please select a resume"
-        );
-
-        return;
-      }
-
-      alert(
-        "Resume Uploaded Successfully"
-      );
-    };
 
   const generateAIResume =
     async () => {
@@ -88,7 +71,7 @@ export default function ResumeBuilder() {
           );
 
         setAiResume(
-          res.data.resume
+          res.data.result
         );
 
       } catch (error) {
@@ -120,6 +103,42 @@ export default function ResumeBuilder() {
       }}
     >
 
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          top: "20px",
+
+          right: "200px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
       {/* TOP SECTION */}
 
       <div
@@ -132,6 +151,9 @@ export default function ResumeBuilder() {
         }}
       >
 
+        <br />
+
+
         <h1
           style={{
             fontSize:
@@ -142,6 +164,12 @@ export default function ResumeBuilder() {
 
             fontWeight:
               "900",
+
+            color: darkMode
+              ? "#0f172a"
+              : "white",
+
+            WebkitTextStroke: "1px white",
           }}
         >
           AI Resume Builder
@@ -152,8 +180,11 @@ export default function ResumeBuilder() {
             fontSize:
               "22px",
 
-            color:
-              "#cbd5e1",
+            color: darkMode
+              ? "black"
+              : "white",
+
+            fontWeight: "500",
           }}
         >
           <br />
@@ -195,173 +226,6 @@ export default function ResumeBuilder() {
           }}
         >
 
-          {/* RESUME UPLOAD */}
-
-          <div
-            style={{
-              backdropFilter:
-                "blur(14px)",
-
-              color:
-                "#0f172a",
-
-              borderRadius:
-                "24px",
-
-              padding:
-                "40px",
-
-              boxShadow:
-                "0 10px 35px rgba(0,0,0,0.25)",
-
-              border:
-                "1px solid rgba(255,255,255,0.1)",
-            }}
-          >
-
-            <h2
-              style={{
-                color:
-                  "white",
-
-                fontSize:
-                  "34px",
-
-                marginBottom:
-                  "20px",
-              }}
-            >
-              Upload Resume
-            </h2>
-
-            <p
-              style={{
-                color:
-                  "#02050a",
-
-                marginBottom:
-                  "30px",
-
-                fontWeight:
-                  "500",
-
-                lineHeight:
-                  "1.8",
-              }}
-            >
-              Upload your latest resume in PDF or DOC format.
-            </p>
-
-            <input
-              type="file"
-
-              accept=".pdf,.doc,.docx"
-
-              onChange={
-                handleUpload
-              }
-
-              style={{
-                marginBottom:
-                  "25px",
-
-                fontSize:
-                  "16px",
-
-                color:
-                  "#475569",
-
-                borderRadius:
-                  "12px",
-
-                border:
-                  "1px solid #cbd5e1",
-
-                background:
-                  "#1e293b",
-              }}
-            />
-
-            {resume && (
-
-              <div
-                style={{
-                  background:
-                    "#eff6ff",
-
-                  padding:
-                    "18px",
-
-                  borderRadius:
-                    "14px",
-
-                  marginBottom:
-                    "25px",
-                }}
-              >
-
-                <p
-                  style={{
-                    margin:
-                      "0",
-
-                    fontWeight:
-                      "700",
-                  }}
-                >
-                  Selected File
-                </p>
-
-                <p
-                  style={{
-                    marginTop:
-                      "8px",
-                  }}
-                >
-                  {resume.name}
-                </p>
-
-              </div>
-            )}
-
-            <button
-              onClick={
-                handleSubmit
-              }
-
-              style={{
-                width:
-                  "100%",
-
-                padding:
-                  "16px",
-
-                border:
-                  "none",
-
-                borderRadius:
-                  "999px",
-
-                background:
-                  "#2563eb",
-
-                color:
-                  "white",
-
-                fontWeight:
-                  "700",
-
-                fontSize:
-                  "18px",
-
-                cursor:
-                  "pointer",
-              }}
-            >
-              Upload Resume
-            </button>
-
-          </div>
 
           {/* AI FORM */}
 
@@ -370,8 +234,9 @@ export default function ResumeBuilder() {
               backdropFilter:
                 "blur(14px)",
 
-              color:
-                "#0f172a",
+              color: darkMode
+                ? "#0f172a"
+                : "white",
 
               borderRadius:
                 "24px",
@@ -380,20 +245,27 @@ export default function ResumeBuilder() {
                 "40px",
 
               border:
-                "1px solid rgba(255,255,255,0.1)",
+                "1px solid rgba(255,255,255,0.4)",
+
+              background: darkMode
+                ? "rgba(15,23,42,0.1)"
+                : "rgba(255,255,255,0.15)",
             }}
           >
 
             <h2
               style={{
-                color:
-                  "white",
+                color: darkMode
+                  ? "#0f172a"
+                  : "white",
 
                 fontSize:
                   "34px",
 
                 marginBottom:
                   "20px",
+
+                  WebkitTextStroke: "0.25px white",
               }}
             >
               Generate AI Resume
@@ -418,7 +290,21 @@ export default function ResumeBuilder() {
                   handleChange
                 }
 
-                style={input}
+                style={{
+                  ...input,
+
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
               />
 
               <textarea
@@ -431,7 +317,21 @@ export default function ResumeBuilder() {
                   handleChange
                 }
 
-                style={textarea}
+                style={{
+                  ...textarea,
+
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
               />
 
               <textarea
@@ -444,7 +344,21 @@ export default function ResumeBuilder() {
                   handleChange
                 }
 
-                style={textarea}
+                style={{
+                  ...textarea,
+
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
               />
 
               <textarea
@@ -457,7 +371,21 @@ export default function ResumeBuilder() {
                   handleChange
                 }
 
-                style={textarea}
+                style={{
+                  ...textarea,
+
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
               />
 
               <textarea
@@ -470,7 +398,21 @@ export default function ResumeBuilder() {
                   handleChange
                 }
 
-                style={textarea}
+                style={{
+                  ...textarea,
+
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
               />
 
               <button
@@ -535,7 +477,7 @@ export default function ResumeBuilder() {
             style={{
 
               border:
-                "1px solid rgba(255,255,255,0.1)",
+                "1px solid rgba(255,255,255,0.4)",
 
               borderRadius:
                 "24px",
@@ -548,6 +490,10 @@ export default function ResumeBuilder() {
 
               minHeight:
                 "360px",
+
+              background: darkMode
+                ? "rgba(15,23,42,0.1)"
+                : "rgba(255,255,255,0.15)",
             }}
           >
 
@@ -558,6 +504,12 @@ export default function ResumeBuilder() {
 
                 marginBottom:
                   "25px",
+
+                color: darkMode
+                  ? "#0f172a"
+                  : "white",
+
+                  WebkitTextStroke: "0.25px white",
               }}
             >
               AI Generated Resume
@@ -571,13 +523,15 @@ export default function ResumeBuilder() {
                 lineHeight:
                   "1.9",
 
-                color:
-                  "#e2e8f0",
+                fontWeight: "700",
+
+                color: darkMode
+                ? "rgba(239, 235, 235, 0.4)"
+                :"white",
               }}
             >
               {
                 aiResume ||
-
                 "Your AI-generated professional resume will appear here..."
               }
             </div>
@@ -588,11 +542,12 @@ export default function ResumeBuilder() {
 
           <div
             style={{
-              background:
-                "rgba(255,255,255,0.08)",
+              background: darkMode
+                ? "rgba(15,23,42,0.1)"
+                : "rgba(255,255,255,0.15)",
 
               border:
-                "1px solid rgba(255,255,255,0.1)",
+                "1px solid rgba(255,255,255,0.4)",
 
               borderRadius:
                 "24px",
@@ -613,6 +568,12 @@ export default function ResumeBuilder() {
 
                 marginBottom:
                   "25px",
+
+                color: darkMode
+                  ? "#0f172a"
+                  : "white",
+
+                  WebkitTextStroke: "0.25px white",
               }}
             >
               Resume Tips
@@ -635,8 +596,13 @@ export default function ResumeBuilder() {
                     key={tip}
 
                     style={{
-                      background:
-                        "#1e293b",
+                      background: darkMode
+                        ? "#1e293b"
+                        : "white",
+
+                      color: darkMode
+                        ? "white"
+                        : "black",
 
                       padding:
                         "18px",
@@ -646,9 +612,6 @@ export default function ResumeBuilder() {
 
                       lineHeight:
                         "1.7",
-
-                      color:
-                        "#e2e8f0",
                     }}
                   >
                     ✓ {tip}
@@ -664,7 +627,70 @@ export default function ResumeBuilder() {
 
       </div>
 
+      <br />
+      <br />
+      <br />
+
+      <div>
+
+        <Link
+          to="/"
+
+          style={{
+            textAlign:
+              "center",
+
+            color:
+              "#b6f509",
+
+            textDecoration:
+              "none",
+
+            marginTop:
+              "5px",
+
+            fontWeight:
+              "600",
+
+            background:
+              "rgba(255,255,255,0.08)",
+
+            border:
+              "1px solid #cbd5e1",
+
+            borderRadius:
+              "10px",
+
+            padding:
+              "5px 10px",
+
+          }}
+        >
+          ← Back to Home
+        </Link>
+
+      </div>
+
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
+      </div>
+
     </div>
+
   );
 }
 

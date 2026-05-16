@@ -1,7 +1,16 @@
 import {
   useEffect,
   useState,
+  useCallback,
 } from "react";
+
+import {
+  Link,
+} from "react-router-dom";
+
+import {
+  useTheme,
+} from "../context/ThemeContext";
 
 import API from "../services/api";
 
@@ -19,62 +28,38 @@ import {
 } from "recharts";
 
 export default function AdminDashboard() {
-  const [companies,
-    setCompanies] =
+  const [companies, setCompanies] =
     useState([]);
 
-  const [applications,
-    setApplications] =
-    useState([]);
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [stats, setStats] =
     useState({});
 
-  const [formData,
-    setFormData] =
-    useState({
-      companyName: "",
-      role: "",
-      package: "",
-      minCGPA: "",
-      allowedBranches: "",
-      description: "",
-      deadline: "",
-    });
+  const fetchCompanies = useCallback(
 
-  const fetchCompanies =
     async () => {
-      try {
-        const res =
-          await API.get(
-            "/companies"
-          );
 
-        setCompanies(
-          res.data
-        );
+      try {
+
+        const res =
+          await API.get("/companies");
+
+        setCompanies(res.data);
+
       } catch (error) {
+
         console.log(error);
       }
-    };
+    },
 
-  const fetchApplications =
-    async () => {
-      try {
-        const res =
-          await API.get(
-            "/applications/all"
-          );
+    []
+  );
 
-        setApplications(
-          res.data
-        );
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-  const fetchStats =
+  const fetchStats = useCallback(
     async () => {
       try {
         const res =
@@ -88,90 +73,21 @@ export default function AdminDashboard() {
       } catch (error) {
         console.log(error);
       }
-    };
+    },
+    []
+  );
 
   useEffect(() => {
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCompanies();
 
-    fetchApplications();
-
     fetchStats();
-  }, []);
 
-  const updateApplicationStatus =
-    async (
-      id,
-      status
-    ) => {
-      try {
-        await API.put(
-          `/applications/${id}`,
-          { status }
-        );
-
-        alert(
-          `Application ${status}`
-        );
-
-        fetchApplications();
-
-        fetchStats();
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-  const handleChange = (
-    e
-  ) => {
-    setFormData({
-      ...formData,
-
-      [e.target.name]:
-        e.target.value,
-    });
-  };
-
-  const handleSubmit =
-    async (e) => {
-      e.preventDefault();
-
-      try {
-        await API.post(
-          "/companies",
-          {
-            ...formData,
-
-            allowedBranches:
-              formData.allowedBranches
-                .split(",")
-
-                .map((b) =>
-                  b.trim()
-                ),
-          }
-        );
-
-        alert(
-          "Company Added Successfully"
-        );
-
-        setFormData({
-          companyName: "",
-          role: "",
-          package: "",
-          minCGPA: "",
-          allowedBranches:
-            "",
-          description: "",
-          deadline: "",
-        });
-
-        fetchCompanies();
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  }, [
+    fetchCompanies,
+    fetchStats
+  ]);
 
   const chartData = [
     {
@@ -204,24 +120,68 @@ export default function AdminDashboard() {
       style={{
         minHeight: "100vh",
 
-        background:
-          "#020617",
-
         color: "white",
 
         padding: "40px",
       }}
     >
+
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          top: "20px",
+
+          right: "200px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
+      <br />
+
       <h1
         style={{
-          fontSize: "42px",
+          fontSize: "50px",
 
           marginBottom:
             "30px",
+
+          color: darkMode
+            ? "#0f172a"
+            : "white",
+
+          WebkitTextStroke: "1px white",
         }}
       >
         Admin Dashboard
       </h1>
+
+      <br />
 
       <div
         style={{
@@ -241,6 +201,7 @@ export default function AdminDashboard() {
           value={
             stats.total
           }
+          darkMode={darkMode}
         />
 
         <StatCard
@@ -248,6 +209,7 @@ export default function AdminDashboard() {
           value={
             stats.approved
           }
+          darkMode={darkMode}
         />
 
         <StatCard
@@ -255,6 +217,7 @@ export default function AdminDashboard() {
           value={
             stats.rejected
           }
+          darkMode={darkMode}
         />
 
         <StatCard
@@ -262,11 +225,13 @@ export default function AdminDashboard() {
           value={
             stats.pending
           }
+          darkMode={darkMode}
         />
 
         <StatCard
           title="Placement %"
           value={`${stats.percentage ?? 0}%`}
+          darkMode={darkMode}
         />
       </div>
 
@@ -285,8 +250,17 @@ export default function AdminDashboard() {
       >
         <div
           style={{
-            background:
-              "#111827",
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
 
             padding:
               "25px",
@@ -302,6 +276,10 @@ export default function AdminDashboard() {
             style={{
               marginBottom:
                 "20px",
+
+              color: darkMode
+                ? "white"
+                : "black",
             }}
           >
             Application Analytics
@@ -309,40 +287,60 @@ export default function AdminDashboard() {
 
           <ResponsiveContainer
             width="100%"
-            height="90%"
+            height={300}
           >
             <PieChart>
               <Pie
                 data={chartData}
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                fill="#8884d8"
                 dataKey="value"
-                outerRadius={120}
+                label
               >
                 {chartData.map(
-                  (
-                    entry,
-                    index
-                  ) => (
+                  (entry, index) => (
                     <Cell
                       key={index}
-                      fill={
-                        COLORS[
-                          index
-                        ]
-                      }
+                      fill={COLORS[index]}
                     />
                   )
                 )}
               </Pie>
 
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
 
         <div
           style={{
-            background:
-              "#111827",
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
 
             padding:
               "25px",
@@ -358,6 +356,10 @@ export default function AdminDashboard() {
             style={{
               marginBottom:
                 "20px",
+
+              color: darkMode
+                ? "white"
+                : "black",
             }}
           >
             Placement Overview
@@ -365,365 +367,320 @@ export default function AdminDashboard() {
 
           <ResponsiveContainer
             width="100%"
-            height="90%"
+            height={300}
           >
-            <BarChart
-              data={chartData}
-            >
+            <BarChart data={chartData}>
+
               <CartesianGrid
                 strokeDasharray="3 3"
+                stroke={
+                  darkMode
+                    ? "#475569"
+                    : "#cbd5e1"
+                }
               />
 
               <XAxis
                 dataKey="name"
+                stroke={
+                  darkMode
+                    ? "white"
+                    : "black"
+                }
               />
 
-              <YAxis />
+              <YAxis
+                stroke={
+                  darkMode
+                    ? "white"
+                    : "black"
+                }
+              />
 
-              <Tooltip />
+              <Tooltip
+                contentStyle={{
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "black",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
+                }}
+              />
 
               <Bar
                 dataKey="value"
-                fill="#8b5cf6"
+                fill={
+                  darkMode
+                    ? "#8b5cf6"
+                    : "#6366f1"
+                }
               />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <form
-        onSubmit={
-          handleSubmit
-        }
-        style={{
-          background:
-            "#111827",
-
-          padding:
-            "25px",
-
-          borderRadius:
-            "20px",
-
-          display: "grid",
-
-          gap: "15px",
-
-          marginBottom:
-            "40px",
-        }}
-      >
-        <input
-          type="text"
-          name="companyName"
-          placeholder="Company Name"
-          value={
-            formData.companyName
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <input
-          type="text"
-          name="role"
-          placeholder="Role"
-          value={
-            formData.role
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <input
-          type="text"
-          name="package"
-          placeholder="Package"
-          value={
-            formData.package
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <input
-          type="number"
-          name="minCGPA"
-          placeholder="Minimum CGPA"
-          value={
-            formData.minCGPA
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <input
-          type="text"
-          name="allowedBranches"
-          placeholder="Allowed Branches"
-          value={
-            formData.allowedBranches
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <textarea
-          name="description"
-          placeholder="Description"
-          value={
-            formData.description
-          }
-          onChange={
-            handleChange
-          }
-          style={{
-            ...inputStyle,
-
-            minHeight:
-              "120px",
-          }}
-        />
-
-        <input
-          type="date"
-          name="deadline"
-          value={
-            formData.deadline
-          }
-          onChange={
-            handleChange
-          }
-          style={
-            inputStyle
-          }
-        />
-
-        <button
-          type="submit"
-          style={{
-            padding:
-              "14px",
-
-            border:
-              "none",
-
-            borderRadius:
-              "12px",
-
-            background:
-              "#8b5cf6",
-
-            color:
-              "white",
-
-            cursor:
-              "pointer",
-
-            fontWeight:
-              "600",
-
-            fontSize:
-              "16px",
-          }}
-        >
-          Add Company
-        </button>
-      </form>
-
       <h2
         style={{
-          marginBottom:
-            "20px",
+          marginBottom: "55px",
+
+          fontSize: "40px",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          WebkitTextStroke: "1px white",
         }}
       >
-        All Applications
+        Recruiter Advertisements
       </h2>
 
       <div
         style={{
           display: "grid",
 
-          gap: "20px",
+          gridTemplateColumns:
+            "repeat(3,1fr)",
+
+          gap: "30px",
+
+          marginBottom: "40px",
         }}
       >
-        {applications.map(
-          (app) => (
-            <div
-              key={app._id}
-              style={{
-                background:
-                  "#111827",
+        {companies.map((company) => (
 
-                padding:
-                  "20px",
+          <div
+            key={
+              company._id
+            }
+
+            style={{
+              background: darkMode
+                ? "#1e293b"
+                : "white",
+
+              color: darkMode
+                ? "white"
+                : "#0b1f59",
+
+              border: darkMode
+                ? "1px solid #cbd5e1"
+                : "1px solid #94a3b8",
+
+              padding:
+                "30px",
+
+              borderRadius:
+                "24px",
+
+              minHeight:
+                "450px",
+
+              display:
+                "flex",
+
+              flexWrap: "wrap",
+
+              flexDirection:
+                "column",
+
+              justifyContent:
+                "space-between",
+            }}
+          >
+
+            <div
+              style={{
+                width:
+                  "70px",
+
+                height:
+                  "70px",
 
                 borderRadius:
-                  "16px",
+                  "20px",
+
+                background:
+                  "#8b5cf6",
+
+                display:
+                  "flex",
+
+                flexWrap: "wrap",
+
+                justifyContent:
+                  "center",
+
+                alignItems:
+                  "center",
+
+                fontSize:
+                  "34px",
+
+                fontWeight:
+                  "700",
+
+                marginBottom:
+                  "25px",
+
+                color: darkMode
+                  ? "white"
+                  : "#0f172a",
               }}
             >
-              <h3>
-                {
-                  app.student
-                    ?.name
-                }
-              </h3>
-
-              <p>
-                Email:
-                {" "}
-                {
-                  app.student
-                    ?.email
-                }
-              </p>
-
-              <p>
-                Company:
-                {" "}
-                {
-                  app.company
-                    ?.companyName
-                }
-              </p>
-
-              <p>
-                Role:
-                {" "}
-                {
-                  app.company
-                    ?.role
-                }
-              </p>
-
-              <p>
-                Status:
-                {" "}
-                {app.status}
-              </p>
-
-              {app.student
-                ?.resume && (
-                  <a
-                    href={`http://localhost:5000/uploads/${app.student.resume}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      display:
-                        "inline-block",
-
-                      marginTop:
-                        "10px",
-
-                      color:
-                        "#60a5fa",
-
-                      textDecoration:
-                        "none",
-
-                      fontWeight:
-                        "600",
-                    }}
-                  >
-                    View Resume
-                  </a>
-                )}
-
-              <div
-                style={{
-                  display:
-                    "flex",
-
-                  gap: "10px",
-
-                  marginTop:
-                    "15px",
-                }}
-              >
-                <button
-                  onClick={() =>
-                    updateApplicationStatus(
-                      app._id,
-                      "approved"
-                    )
-                  }
-                  style={{
-                    padding:
-                      "10px 16px",
-
-                    border:
-                      "none",
-
-                    borderRadius:
-                      "10px",
-
-                    background:
-                      "#22c55e",
-
-                    color:
-                      "white",
-
-                    cursor:
-                      "pointer",
-                  }}
-                >
-                  Approve
-                </button>
-
-                <button
-                  onClick={() =>
-                    updateApplicationStatus(
-                      app._id,
-                      "rejected"
-                    )
-                  }
-                  style={{
-                    padding:
-                      "10px 16px",
-
-                    border:
-                      "none",
-
-                    borderRadius:
-                      "10px",
-
-                    background:
-                      "#ef4444",
-
-                    color:
-                      "white",
-
-                    cursor:
-                      "pointer",
-                  }}
-                >
-                  Reject
-                </button>
-              </div>
+              {
+                company.companyName?.charAt(0)
+              }
             </div>
-          )
-        )}
+
+            <h2
+              style={{
+                fontSize:
+                  "30px",
+
+                lineHeight:
+                  "1.2",
+
+                marginBottom:
+                  "10px",
+
+                color: darkMode
+                  ? "white"
+                  : "#0f172a",
+              }}
+            >
+              {
+                company.companyName
+              }
+            </h2>
+
+            <p>
+              Role: {company.role}
+            </p>
+
+            <p>
+              Package: {company.package}
+            </p>
+
+            <p>
+              Min CGPA: {company.minCGPA}
+            </p>
+
+            <p>
+              Branches:
+              {" "}
+              {company.allowedBranches.join(", ")}
+            </p>
+
+            <p>
+              Deadline:
+              {" "}
+              {new Date(
+                company.deadline
+              ).toLocaleDateString()}
+            </p>
+
+            <p
+              style={{
+                color: darkMode
+                  ? "#cbd5e1"
+                  : "#334155",
+
+                lineHeight: "1.6",
+              }}
+            >
+              {company.description}
+            </p>
+
+            <br />
+
+            <div
+              style={{
+                background:
+                  "#22c55e",
+
+                padding:
+                  "7px 14px",
+
+                borderRadius:
+                  "999px",
+
+                fontWeight:
+                  "700",
+
+                fontSize:
+                  "14px",
+              }}
+            >
+              Active
+            </div>
+          </div>
+        ))}
       </div>
+
+      <br />
+
+      <Link
+        to="/"
+
+        style={{
+          textAlign:
+            "center",
+
+          color:
+            "#b6f509",
+
+          textDecoration:
+            "none",
+
+          marginTop:
+            "5px",
+
+          fontWeight:
+            "600",
+
+          background:
+            "rgba(255,255,255,0.08)",
+
+          border:
+            "1px solid #cbd5e1",
+
+          borderRadius:
+            "10px",
+
+          padding:
+            "5px 10px",
+
+        }}
+      >
+        ← Back to Home
+      </Link>
+
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
+      </div>
+
     </div>
   );
 }
@@ -731,30 +688,37 @@ export default function AdminDashboard() {
 function StatCard({
   title,
   value,
+  darkMode,
 }) {
   return (
     <div
       style={{
-        background:
-          "#111827",
+        background: darkMode
+          ? "#1e293b"
+          : "white",
 
-        padding:
-          "25px",
+        color: darkMode
+          ? "white"
+          : "black",
 
-        borderRadius:
-          "20px",
+        border: darkMode
+          ? "1px solid #cbd5e1"
+          : "1px solid black",
 
-        textAlign:
-          "center",
+        padding: "25px",
+
+        borderRadius: "20px",
+
+        textAlign: "center",
       }}
     >
       <h3
         style={{
-          marginBottom:
-            "10px",
+          marginBottom: "10px",
 
-          color:
-            "#94a3b8",
+          color: darkMode
+            ? "#cbd5e1"
+            : "#475569",
         }}
       >
         {title}
@@ -762,8 +726,11 @@ function StatCard({
 
       <h1
         style={{
-          fontSize:
-            "42px",
+          fontSize: "42px",
+
+          color: darkMode
+            ? "white"
+            : "black",
         }}
       >
         {value ?? 0}
@@ -771,19 +738,3 @@ function StatCard({
     </div>
   );
 }
-
-const inputStyle = {
-  padding: "14px",
-
-  borderRadius:
-    "12px",
-
-  border: "none",
-
-  background:
-    "#1e293b",
-
-  color: "white",
-
-  outline: "none",
-};

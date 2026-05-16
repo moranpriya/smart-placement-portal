@@ -4,66 +4,55 @@ const express =
 const router =
   express.Router();
 
-const OpenAI =
-  require("openai");
-
-const openai =
-  new OpenAI({
-    apiKey:
-      process.env.OPENAI_API_KEY,
-  });
-
 router.post(
   "/generate-resume",
+
   async (req, res) => {
 
     try {
 
       const {
         name,
-        branch,
         skills,
         projects,
+        education,
+        achievements,
       } = req.body;
 
-      const prompt = `
-Create a professional placement resume.
+      const generatedResume = `
+${name}
 
-Name: ${name}
-Branch: ${branch}
-Skills: ${skills}
-Projects: ${projects}
+PROFESSIONAL SUMMARY
+Motivated and passionate student seeking placement opportunities with strong technical and problem-solving skills.
 
-Generate:
-- Summary
-- Skills
-- Projects
-- Certifications
-- Achievements
+TECHNICAL SKILLS
+${skills}
+
+PROJECTS
+${projects}
+
+EDUCATION
+${education}
+
+ACHIEVEMENTS
+${achievements}
+
+CERTIFICATIONS
+• Web Development
+• Data Structures & Algorithms
+
+STRENGTHS
+• Teamwork
+• Leadership
+• Communication
+• Quick Learner
+
 `;
-
-      const completion =
-        await openai.chat.completions.create({
-
-          model:
-            "gpt-3.5-turbo",
-
-          messages: [
-            {
-              role:
-                "user",
-
-              content:
-                prompt,
-            },
-          ],
-        });
 
       res.json({
 
         result:
-          completion.choices[0]
-            .message.content,
+          generatedResume,
       });
 
     } catch (error) {
@@ -73,7 +62,7 @@ Generate:
       res.status(500).json({
 
         message:
-          "AI Resume Generation Failed",
+          "Resume Generation Failed",
       });
     }
   }

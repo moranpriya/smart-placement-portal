@@ -17,7 +17,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import RecruiterRegistration from "./pages/RecruiterRegister";
 import RecruiterLogin from "./pages/RecruiterLogin";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
-
+import EditProfile from "./pages/EditProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import bgImage from "./assets/college.jpg";
@@ -152,6 +152,20 @@ export default function App() {
                 <RecruiterDashboard />
               </ProtectedRoute>
             }
+          />
+
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/recruiterLogin"
+            element={<RecruiterLogin />}
           />
 
         </Route>

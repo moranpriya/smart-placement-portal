@@ -4,7 +4,12 @@ import {
 
 import {
     useNavigate,
+    Link,
 } from "react-router-dom";
+
+import {
+    useTheme,
+} from "../context/ThemeContext";
 
 import API from "../services/api";
 
@@ -12,6 +17,11 @@ export default function RecruiterRegister() {
 
     const navigate =
         useNavigate();
+
+    const {
+        darkMode,
+        setDarkMode,
+    } = useTheme();
 
     const [formData,
         setFormData] =
@@ -72,7 +82,7 @@ export default function RecruiterRegister() {
                 );
 
                 navigate(
-                    "/login"
+                    "/recruiterLogin"
                 );
 
             } catch (error) {
@@ -104,6 +114,8 @@ export default function RecruiterRegister() {
                 display:
                     "flex",
 
+                flexWrap: "wrap",
+
                 justifyContent:
                     "center",
 
@@ -113,9 +125,44 @@ export default function RecruiterRegister() {
                 padding:
                     "40px",
 
-
             }}
         >
+
+            <button
+                onClick={() =>
+                    setDarkMode(!darkMode)
+                }
+
+                style={{
+                    position: "absolute",
+
+                    right: "200px",
+
+                    top: "20px",
+
+                    padding: "10px 14px",
+
+                    border: "none",
+
+                    borderRadius: "10px",
+
+                    background: darkMode
+                        ? "#facc15"
+                        : "#111827",
+
+                    color: darkMode
+                        ? "black"
+                        : "white",
+
+                    cursor: "pointer",
+
+                    fontWeight: "700",
+
+                    zIndex: "5",
+                }}
+            >
+                {darkMode ? "☀️ Light" : "🌙 Dark"}
+            </button>
 
             <form
                 onSubmit={
@@ -124,13 +171,13 @@ export default function RecruiterRegister() {
 
                 style={{
                     width:
+                        "100%",
+
+                    maxWidth:
                         "500px",
 
-                    backdropFilter:
-                        "blur(14px)",
-
                     border:
-                        "1px solid rgba(255,255,255,0.08)",
+                        "1px solid rgba(255,255,255,0.4)",
 
                     padding:
                         "40px",
@@ -143,6 +190,16 @@ export default function RecruiterRegister() {
 
                     gap:
                         "18px",
+
+                    background: darkMode
+                        ? "rgba(15,23,42,0.1)"
+                        : "rgba(255,255,255,0.15)",
+
+                    color: darkMode
+                        ? "white"
+                        : "#0b1f59",
+
+                    backdropFilter: "blur(6px)",
                 }}
             >
 
@@ -154,14 +211,18 @@ export default function RecruiterRegister() {
                         marginBottom:
                             "20px",
 
-                        color:
-                            "white",
+                        color: darkMode
+                            ? "#0f172a"
+                            : "white",
 
                         fontSize: "45px",
 
                         position: "relative",
 
                         top: "-20px",
+
+                        WebkitTextStroke: "1px white",
+
                     }}
                 >
                     Recruiter Registration
@@ -176,7 +237,21 @@ export default function RecruiterRegister() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <input
@@ -187,8 +262,21 @@ export default function RecruiterRegister() {
                     onChange={
                         handleChange
                     }
+                    style={{
+                        ...input,
 
-                    style={input}
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <input
@@ -200,7 +288,21 @@ export default function RecruiterRegister() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <input
@@ -212,7 +314,21 @@ export default function RecruiterRegister() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <input
@@ -224,7 +340,21 @@ export default function RecruiterRegister() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <button
@@ -256,6 +386,33 @@ export default function RecruiterRegister() {
                     Register Recruiter
                 </button>
 
+                <p
+                    style={{
+                        color:
+                            "white",
+
+                        textAlign:
+                            "center",
+                    }}
+                >
+                    Already Registered?
+
+                    {" "}
+
+                    <Link
+                        to="/recruiterLogin"
+                        style={link}
+                    >
+                        Login
+                    </Link>
+                </p>
+
+                <Link
+                    to="/"
+                    style={link}
+                >
+                    ← Back to Home
+                </Link>
             </form>
 
         </div>
@@ -278,4 +435,16 @@ const input = {
 
     background:
         "#1e293b",
+};
+
+const link = {
+
+    color:
+        "#b6f509",
+
+    textDecoration:
+        "none",
+
+    textAlign:
+        "center",
 };

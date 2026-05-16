@@ -15,6 +15,7 @@ const getCompanies =
       );
 
     } catch (error) {
+      console.log(error);
 
       res.status(500).json({
         message:
@@ -61,6 +62,7 @@ const addCompany = async (
     );
 
   } catch (error) {
+    console.log(error);
 
     res.status(500).json({
       message:

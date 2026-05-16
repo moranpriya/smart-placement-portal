@@ -3,6 +3,14 @@ import {
   useState,
 } from "react";
 
+import {
+  Link,
+} from "react-router-dom";
+
+import {
+  useTheme,
+} from "../context/ThemeContext";
+
 import API from "../services/api";
 
 export default function Experiences() {
@@ -10,6 +18,11 @@ export default function Experiences() {
   const [experiences,
     setExperiences] =
     useState([]);
+
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [formData,
     setFormData] =
@@ -47,6 +60,7 @@ export default function Experiences() {
 
   useEffect(() => {
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchExperiences();
 
   }, []);
@@ -118,13 +132,60 @@ export default function Experiences() {
       }}
     >
 
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          right: "200px",
+
+          top: "20px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+
+      </button>
+
+      <br />
+      <br />
+
       <form
         onSubmit={
           handleSubmit
         }
         style={{
-          backdropFilter:
-            "blur(14px)",
+          background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
+
+          color: darkMode
+            ? "white"
+            : "#0b1f59",
+
+          backdropFilter: "blur(6px)",
 
           padding:
             "25px",
@@ -142,21 +203,28 @@ export default function Experiences() {
             "40px",
 
           border:
-            "1px solid rgba(255,255,255,0.08)",
+            "1px solid rgba(255,255,255,0.4)",
         }}
       >
 
         <h1
-        style={{
-          fontSize:
-            "42px",
+          style={{
+            fontSize:
+              "42px",
 
-          marginBottom:
-            "30px",
-        }}
-      >
-        Interview Experiences
-      </h1>
+            marginBottom:
+              "30px",
+
+            color: darkMode
+              ? "#0f172a"
+              : "white",
+
+            WebkitTextStroke: "1px white",
+
+          }}
+        >
+          Interview Experiences
+        </h1>
 
         <input
           type="text"
@@ -168,9 +236,21 @@ export default function Experiences() {
           onChange={
             handleChange
           }
-          style={
-            inputStyle
-          }
+          style={{
+            ...inputStyle,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
           required
         />
 
@@ -184,9 +264,21 @@ export default function Experiences() {
           onChange={
             handleChange
           }
-          style={
-            inputStyle
-          }
+          style={{
+            ...inputStyle,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
           required
         />
 
@@ -201,6 +293,18 @@ export default function Experiences() {
           }
           style={{
             ...inputStyle,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
 
             minHeight:
               "140px",
@@ -219,6 +323,18 @@ export default function Experiences() {
           }
           style={{
             ...inputStyle,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
 
             minHeight:
               "100px",
@@ -275,8 +391,17 @@ export default function Experiences() {
             <div
               key={exp._id}
               style={{
-                background:
-                  "#111827",
+                background: darkMode
+                  ? "#1e293b"
+                  : "white",
+
+                color: darkMode
+                  ? "white"
+                  : "black",
+
+                border: darkMode
+                  ? "1px solid #cbd5e1"
+                  : "1px solid #94a3b8",
 
                 padding:
                   "25px",
@@ -286,10 +411,14 @@ export default function Experiences() {
               }}
             >
 
-              <h2>
-                {
-                  exp.companyName
-                }
+              <h2
+                style={{
+                  color: darkMode
+                    ? "white"
+                    : "#0f172a",
+                }}
+              >
+                {exp.companyName}
               </h2>
 
               <p>
@@ -300,19 +429,6 @@ export default function Experiences() {
                 {" "}
 
                 {exp.role}
-              </p>
-
-              <p>
-                <strong>
-                  By:
-                </strong>
-
-                {" "}
-
-                {
-                  exp.student
-                    ?.name
-                }
               </p>
 
               <hr
@@ -361,6 +477,67 @@ export default function Experiences() {
 
       </div>
 
+      <br />
+      <br />
+
+      <div>
+
+        <Link
+          to="/"
+
+          style={{
+            textAlign:
+              "center",
+
+            color:
+              "#b6f509",
+
+            textDecoration:
+              "none",
+
+            marginTop:
+              "5px",
+
+            fontWeight:
+              "600",
+
+            background:
+              "rgba(255,255,255,0.08)",
+
+            borderRadius:
+              "10px",
+
+            padding:
+              "5px 10px",
+
+            border:
+              "1px solid #cbd5e1",
+
+          }}
+        >
+          ← Back to Home
+        </Link>
+
+      </div>
+
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
+      </div>
+
     </div>
   );
 }
@@ -372,9 +549,6 @@ const inputStyle = {
 
   borderRadius:
     "12px",
-
-  border:
-    "none",
 
   background:
     "#1e293b",

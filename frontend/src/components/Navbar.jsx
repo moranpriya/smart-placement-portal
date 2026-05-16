@@ -35,7 +35,7 @@ export default function Navbar() {
           "18px 40px",
 
         display: "flex",
-
+        flexWrap: "wrap",
         justifyContent:
           "space-between",
 
@@ -67,7 +67,7 @@ export default function Navbar() {
       <div
         style={{
           display: "flex",
-
+          flexWrap: "wrap",
           gap: "25px",
 
           alignItems:

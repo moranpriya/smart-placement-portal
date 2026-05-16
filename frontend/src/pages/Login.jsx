@@ -7,12 +7,21 @@ import {
   useState,
 } from "react";
 
+import {
+  useTheme,
+} from "../context/ThemeContext";
+
 import API from "../services/api";
 
 export default function Login() {
 
   const navigate =
     useNavigate();
+
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [formData,
     setFormData] =
@@ -91,6 +100,42 @@ export default function Login() {
       style={container}
     >
 
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          top: "20px",
+
+          right: "20px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+
       <div
         style={circle1}
       />
@@ -103,11 +148,31 @@ export default function Login() {
         onSubmit={
           handleSubmit
         }
-        style={formStyle}
+        style={{
+          ...formStyle,
+
+          background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
+
+          color: darkMode
+            ? "white"
+            : "#0b1f59",
+
+          backdropFilter: "blur(6px)",
+        }}
       >
 
         <h1
-          style={title}
+          style={{
+            ...title,
+
+            color: darkMode
+              ? "#0f172a"
+              : "white",
+
+            WebkitTextStroke: "1px white",
+          }}
         >
           Login
         </h1>
@@ -122,7 +187,21 @@ export default function Login() {
           onChange={
             handleChange
           }
-          style={input}
+          style={{
+            ...input,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
         />
 
         <input
@@ -135,7 +214,21 @@ export default function Login() {
           onChange={
             handleChange
           }
-          style={input}
+          style={{
+            ...input,
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
         />
 
         <button
@@ -176,6 +269,25 @@ export default function Login() {
 
       </form>
 
+      <br />
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
+      </div>
+
     </div>
   );
 }
@@ -188,6 +300,8 @@ const container = {
   display:
     "flex",
 
+  flexWrap: "wrap",
+
   justifyContent:
     "center",
 
@@ -199,6 +313,12 @@ const container = {
 
   position:
     "relative",
+
+  flexDirection:
+    "column",
+
+  padding:
+    "40px",
 };
 
 const circle1 = {
@@ -254,8 +374,8 @@ const formStyle = {
   width:
     "400px",
 
-  backdropFilter:
-    "blur(14px)",
+  background:
+    "rgba(30, 41, 59, 0.8)",
 
   padding:
     "40px",
@@ -265,6 +385,8 @@ const formStyle = {
 
   display:
     "flex",
+
+  flexWrap: "wrap",
 
   flexDirection:
     "column",
@@ -279,7 +401,7 @@ const formStyle = {
     "2",
 
   border:
-    "1px solid rgba(255,255,255,0.08)",
+    "1px solid rgba(255,255,255,0.4)",
 };
 
 const title = {
@@ -302,14 +424,11 @@ const input = {
   borderRadius:
     "12px",
 
-  border:
-    "none",
-
   background:
     "#1e293b",
 
   border:
-        "1px solid #cbd5e1",  
+    "1px solid #cbd5e1",
 
   color:
     "white",
@@ -345,7 +464,7 @@ const button = {
 const link = {
 
   color:
-    "#8b5cf6",
+    "#b6f509",
 
   textDecoration:
     "none",

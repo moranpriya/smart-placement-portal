@@ -10,11 +10,20 @@ import {
 
 import API from "../services/api";
 
+import {
+  useTheme,
+} from "../context/ThemeContext";
+
 export default function Dashboard() {
 
   const [companies,
     setCompanies] =
     useState([]);
+
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [applications,
     setApplications] =
@@ -96,54 +105,63 @@ export default function Dashboard() {
       mounted = false;
     };
 
-  },);
+  }, []);
 
-  const uploadResume =
-    async () => {
+const uploadResume =
+  async () => {
 
-      if (!resume) {
+    if (!resume) {
 
-        return alert(
-          "Select Resume"
-        );
-      }
-
-      const data =
-        new FormData();
-
-      data.append(
-        "resume",
-        resume
+      return alert(
+        "Select Resume"
       );
+    }
 
-      try {
+    const data =
+      new FormData();
 
+    data.append(
+      "resume",
+      resume
+    );
+
+    try {
+
+      const res =
         await API.post(
           `/upload/resume/${user._id}`,
           data
         );
 
-        alert(
-          "Resume Uploaded Successfully"
-        );
+      alert(
+        "Resume Uploaded Successfully"
+      );
 
-        const updatedUser = {
-          ...user,
-          resume: resume.name,
-        };
+      const updatedUser = {
+        ...user,
 
-        localStorage.setItem(
-          "user",
-          JSON.stringify(
-            updatedUser
-          )
-        );
+        resume:
+          res.data.resume,
+      };
 
-      } catch (error) {
+      localStorage.setItem(
+        "user",
+        JSON.stringify(
+          updatedUser
+        )
+      );
 
-        console.log(error);
-      }
-    };
+      window.location.reload();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Upload Failed"
+      );
+    }
+  };
 
   const alreadyApplied =
     (
@@ -154,74 +172,6 @@ export default function Dashboard() {
         (app) =>
           app.company?._id ===
           companyId
-      );
-    };
-
-  const checkEligibility =
-    (
-      company
-    ) => {
-
-      const allowedBranches =
-
-        company.allowedBranches
-
-          ?.split(",")
-
-          .map(
-            (
-              branch
-            ) =>
-
-              branch
-                .trim()
-                .toLowerCase()
-          );
-
-      const cgpaEligible =
-
-        Number(
-          user.cgpa
-        )
-
-        >=
-
-        Number(
-          company.minCGPA
-        );
-
-      const branchEligible =
-
-        allowedBranches?.includes(
-
-          user.branch
-            ?.trim()
-            .toLowerCase()
-        );
-
-      const backlogEligible =
-
-        Number(
-          user.backlogs
-        )
-
-        <=
-
-        Number(
-          company.maxBacklogs
-        );
-
-      return (
-
-        cgpaEligible
-
-        &&
-
-        branchEligible
-
-        &&
-
-        backlogEligible
       );
     };
 
@@ -274,12 +224,52 @@ export default function Dashboard() {
       }}
     >
 
-      {/* HEADER */}
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          top: "20px",
+
+          right: "200px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+      </button>
+      
+
+      <br />
+
+
 
       <div
         style={{
           display:
             "flex",
+          flexWrap: "wrap",
 
           justifyContent:
             "space-between",
@@ -295,7 +285,13 @@ export default function Dashboard() {
         <h1
           style={{
             fontSize:
-              "42px",
+              "50px",
+
+            color: darkMode
+              ? "#0f172a"
+              : "white",
+
+            WebkitTextStroke: "1px white",
           }}
         >
           Student Dashboard
@@ -305,6 +301,8 @@ export default function Dashboard() {
           style={{
             display:
               "flex",
+
+            flexWrap: "wrap",
 
             gap:
               "15px",
@@ -329,7 +327,6 @@ export default function Dashboard() {
 
       </div>
 
-      {/* PROFILE */}
 
       <div
         style={{
@@ -348,20 +345,23 @@ export default function Dashboard() {
           display:
             "flex",
 
+          flexWrap: "wrap",
+
           justifyContent:
             "space-between",
 
           alignItems:
             "center",
 
-          flexWrap:
-            "wrap",
-
           gap:
             "20px",
 
           border:
             "1px solid rgba(255,255,255,0.08)",
+
+          background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
         }}
       >
 
@@ -369,6 +369,8 @@ export default function Dashboard() {
           style={{
             display:
               "flex",
+
+            flexWrap: "wrap",
 
             alignItems:
               "center",
@@ -390,11 +392,22 @@ export default function Dashboard() {
               borderRadius:
                 "50%",
 
-              background:
-                "#111827",
+              background: darkMode
+                ? "#1e293b"
+                : "white",
+
+              color: darkMode
+                ? "white"
+                : "black",
+
+              border: darkMode
+                ? "1px solid #cbd5e1"
+                : "1px solid #94a3b8",
 
               display:
                 "flex",
+
+              flexWrap: "wrap",
 
               justifyContent:
                 "center",
@@ -421,8 +434,13 @@ export default function Dashboard() {
                 fontSize:
                   "30px",
 
+                fontWeight:
+                  "700",
+
                 marginBottom:
                   "10px",
+
+                color: "white",
               }}
             >
               {
@@ -455,14 +473,6 @@ export default function Dashboard() {
             </p>
 
             <p>
-              Backlogs:
-              {" "}
-              {
-                user?.backlogs
-              }
-            </p>
-
-            <p>
               Batch:
               {" "}
               {
@@ -490,7 +500,41 @@ export default function Dashboard() {
                   ? "✓ Resume Uploaded"
                   : "✗ Resume Not Uploaded"
               }
+
+              {
+                user?.resume && (
+
+                  <div
+                    style={{
+                      marginTop: "12px",
+                    }}
+                  >
+
+                    <a
+                      href={`http://localhost:5000/uploads/${user.resume}`}
+
+                      target="_blank"
+
+                      rel="noreferrer"
+
+                      style={{
+                        color: "#60a5fa",
+
+                        textDecoration: "none",
+
+                        fontWeight: "700",
+
+                        fontSize: "18px",
+                      }}
+                    >
+                      View Resume
+                    </a>
+
+                  </div>
+                )
+              }
             </p>
+
 
           </div>
 
@@ -500,7 +544,8 @@ export default function Dashboard() {
           style={{
             display:
               "flex",
-
+            flexWrap: "wrap",
+            
             flexDirection:
               "column",
 
@@ -511,6 +556,10 @@ export default function Dashboard() {
         >
 
           <button
+            onClick={() =>
+              navigate("/edit-profile")
+            }
+
             style={{
               padding:
                 "12px 20px",
@@ -521,11 +570,11 @@ export default function Dashboard() {
               borderRadius:
                 "12px",
 
-              color:
-                "white",
-
               background:
                 "#2563eb",
+
+              color:
+                "white",
 
               cursor:
                 "pointer",
@@ -581,7 +630,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* RESUME */}
+
 
       <div
         style={{
@@ -592,13 +641,17 @@ export default function Dashboard() {
             "25px",
 
           marginBottom:
-            "40px",  
+            "40px",
 
           borderRadius:
             "20px",
 
           border:
             "1px solid rgba(255,255,255,0.08)",
+
+          background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
         }}
       >
 
@@ -614,6 +667,8 @@ export default function Dashboard() {
         <input
           type="file"
 
+          accept=".pdf"
+
           onChange={(e) =>
             setResume(
               e.target.files[0]
@@ -621,14 +676,14 @@ export default function Dashboard() {
           }
 
           style={{
-            color:
-              "white",
+            color
+              : "white",
 
             marginBottom:
               "20px",
 
             border:
-              "1px solid rgba(255,255,255,0.08)",
+              "white solid 1px",
 
             borderRadius:
               "7px",
@@ -649,7 +704,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* COMPANY CARDS */}
+
 
       <div
         style={{
@@ -657,10 +712,11 @@ export default function Dashboard() {
             "grid",
 
           gridTemplateColumns:
-            "repeat(3,1fr)",
+            "repeat(auto-fit,minmax(320px,1fr))",
 
           gap:
             "30px",
+
         }}
       >
 
@@ -668,11 +724,6 @@ export default function Dashboard() {
           (
             company
           ) => {
-
-            const eligible =
-              checkEligibility(
-                company
-              );
 
             return (
 
@@ -682,8 +733,17 @@ export default function Dashboard() {
                 }
 
                 style={{
-                  background:
-                    "#111827",
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "#0b1f59",
+
+                  border: darkMode
+                    ? "1px solid #cbd5e1"
+                    : "1px solid #94a3b8",
 
                   padding:
                     "30px",
@@ -696,6 +756,8 @@ export default function Dashboard() {
 
                   display:
                     "flex",
+
+                  flexWrap: "wrap",
 
                   flexDirection:
                     "column",
@@ -722,6 +784,8 @@ export default function Dashboard() {
                     display:
                       "flex",
 
+                    flexWrap: "wrap",
+
                     justifyContent:
                       "center",
 
@@ -736,6 +800,10 @@ export default function Dashboard() {
 
                     marginBottom:
                       "25px",
+
+                    color: darkMode
+                      ? "white"
+                      : "#0f172a",
                   }}
                 >
                   {
@@ -753,6 +821,10 @@ export default function Dashboard() {
 
                     marginBottom:
                       "10px",
+
+                    color: darkMode
+                      ? "white"
+                      : "#0f172a",
                   }}
                 >
                   {
@@ -790,15 +862,11 @@ export default function Dashboard() {
                   Allowed Branches:
                   {" "}
                   {
-                    company.allowedBranches
-                  }
-                </p>
-
-                <p>
-                  Max Backlogs:
-                  {" "}
-                  {
-                    company.maxBacklogs
+                    Array.isArray(
+                      company.allowedBranches
+                    )
+                      ? company.allowedBranches.join(", ")
+                      : company.allowedBranches
                   }
                 </p>
 
@@ -807,8 +875,9 @@ export default function Dashboard() {
                     marginTop:
                       "15px",
 
-                    color:
-                      "#cbd5e1",
+                    color: darkMode
+                      ? "#cbd5e1"
+                      : "#0f172a",
                   }}
                 >
                   {
@@ -823,41 +892,7 @@ export default function Dashboard() {
                   }}
                 >
 
-                  {eligible ? (
 
-                    <div
-                      style={{
-                        color:
-                          "#22c55e",
-
-                        marginBottom:
-                          "15px",
-
-                        fontWeight:
-                          "700",
-                      }}
-                    >
-                      ✓ You are Eligible
-                    </div>
-
-                  ) : (
-
-                    <div
-                      style={{
-                        color:
-                          "#ef4444",
-
-                        marginBottom:
-                          "15px",
-
-                        fontWeight:
-                          "700",
-                      }}
-                    >
-                      ✗ You are Not Eligible
-                    </div>
-
-                  )}
 
                   {alreadyApplied(
                     company._id
@@ -878,10 +913,6 @@ export default function Dashboard() {
                   ) : (
 
                     <button
-                      disabled={
-                        !eligible
-                      }
-
                       onClick={() =>
                         applyCompany(
                           company._id
@@ -890,16 +921,6 @@ export default function Dashboard() {
 
                       style={{
                         ...applyButton,
-
-                        opacity:
-                          eligible
-                            ? 1
-                            : 0.5,
-
-                        cursor:
-                          eligible
-                            ? "pointer"
-                            : "not-allowed",
                       }}
                     >
                       Apply Now
@@ -914,6 +935,67 @@ export default function Dashboard() {
           }
         )}
 
+      </div>
+
+      <br />
+      <br />
+
+      <div>
+
+        <Link
+          to="/"
+
+          style={{
+            textAlign:
+              "center",
+
+            color:
+              "#b6f509",
+
+            textDecoration:
+              "none",
+
+            marginTop:
+              "5px",
+
+            fontWeight:
+              "600",
+
+            background:
+              "rgba(255,255,255,0.08)",
+
+            borderRadius:
+              "10px",
+
+            padding:
+              "5px 10px",
+
+            border:
+              "1px solid #cbd5e1",
+
+          }}
+        >
+          ← Back to Home
+        </Link>
+
+      </div>
+
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
       </div>
 
     </div>

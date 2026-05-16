@@ -48,7 +48,9 @@ const applyToCompany =
       res.json(
         application
       );
-    } catch (error) {
+    } 
+    catch (error) {
+      console.log(error);
       res.status(500).json({
         message:
           error.message,
@@ -96,6 +98,7 @@ const getAllApplications =
         applications
       );
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         message:
           error.message,
@@ -143,6 +146,7 @@ Best wishes for your placement journey.`
         application
       );
     } catch (error) {
+      console.log(error);
       res.status(500).json({
         message:
           error.message,
@@ -197,6 +201,36 @@ const getStats =
         percentage,
       });
     } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message:
+          error.message,
+      });
+    }
+  };
+
+const getRecruiterApplications =
+  async (req, res) => {
+
+    try {
+
+      const applications =
+        await Application.find()
+
+          .populate(
+            "student"
+          )
+
+          .populate(
+            "company"
+          );
+
+      res.json(
+        applications
+      );
+
+    } catch (error) {
+
       res.status(500).json({
         message:
           error.message,
@@ -214,4 +248,6 @@ module.exports = {
   updateStatus,
 
   getStats,
+
+  getRecruiterApplications,
 };

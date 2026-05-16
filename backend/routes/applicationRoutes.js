@@ -15,37 +15,39 @@ const {
   updateStatus,
 
   getStats,
+
+  getRecruiterApplications,
 } = require(
   "../controllers/applicationController"
 );
 
 router.post(
   "/apply",
-
   applyToCompany
 );
 
 router.get(
   "/all",
-
   getAllApplications
 );
 
 router.get(
   "/stats/overview",
-
   getStats
 );
 
 router.get(
-  "/:id",
+  "/recruiter",
+  getRecruiterApplications
+);
 
+router.get(
+  "/:id",
   getApplications
 );
 
 router.put(
   "/:id",
-
   updateStatus
 );
 

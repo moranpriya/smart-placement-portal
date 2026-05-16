@@ -3,9 +3,22 @@ import {
   useState,
 } from "react";
 
+import {
+  Link,
+} from "react-router-dom";
+
 import API from "../services/api";
 
+import {
+  useTheme,
+} from "../context/ThemeContext";
+
 export default function Leaderboard() {
+
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   const [students, setStudents] =
     useState([]);
@@ -66,6 +79,43 @@ export default function Leaderboard() {
       }}
     >
 
+      <button
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+
+        style={{
+          position: "absolute",
+
+          top: "20px",
+
+          right: "200px",
+
+          padding: "10px 14px",
+
+          border: "none",
+
+          borderRadius: "10px",
+
+          background: darkMode
+            ? "#facc15"
+            : "#111827",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          cursor: "pointer",
+
+          fontWeight: "700",
+
+          zIndex: "5",
+        }}
+      >
+        {darkMode ? "☀️ Light" : "🌙 Dark"}
+
+      </button>
+
       {/* HEADER */}
 
       <div
@@ -88,6 +138,12 @@ export default function Leaderboard() {
 
             marginBottom:
               "10px",
+
+            color: darkMode
+              ? "#0f172a"
+              : "white",
+
+            WebkitTextStroke: "2px white",
           }}
         >
           Placement Leaderboard
@@ -95,11 +151,15 @@ export default function Leaderboard() {
 
         <p
           style={{
-            color:
-              "#cbd5e1",
-
             fontSize:
               "30px",
+
+            fontWeight:
+              "600",
+
+            color: darkMode
+              ? "black"
+              : "white",
           }}
         >
           <br />
@@ -176,17 +236,15 @@ export default function Leaderboard() {
               }
 
               style={{
-                background:
-                  "rgba(255,255,255,0.08)",
+                background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
 
                 border:
-                  "1px solid rgba(255,255,255,0.1)",
+                  "1px solid rgba(255,255,255,0.4)",
 
                 backdropFilter:
                   "blur(12px)",
-
-                borderRadius:
-                  "24px",
 
                 padding:
                   "28px 35px",
@@ -199,6 +257,10 @@ export default function Leaderboard() {
 
                 alignItems:
                   "center",
+
+                borderRadius:
+                  "24px",
+
 
                 flexWrap:
                   "wrap",
@@ -217,6 +279,8 @@ export default function Leaderboard() {
                 style={{
                   display:
                     "flex",
+
+                  flexWrap: "wrap",
 
                   alignItems:
                     "center",
@@ -241,13 +305,15 @@ export default function Leaderboard() {
                       index === 0
                         ? "#facc15"
                         : index === 1
-                        ? "#cbd5e1"
-                        : index === 2
-                        ? "#fb923c"
-                        : "#8b5cf6",
+                          ? "#cbd5e1"
+                          : index === 2
+                            ? "#fb923c"
+                            : "#8b5cf6",
 
                     display:
                       "flex",
+
+                    flexWrap: "wrap",
 
                     justifyContent:
                       "center",
@@ -279,6 +345,10 @@ export default function Leaderboard() {
 
                       marginBottom:
                         "8px",
+
+                      color: darkMode
+                        ? "#0f172a"
+                        : "white",
                     }}
                   >
                     {
@@ -289,8 +359,7 @@ export default function Leaderboard() {
 
                   <p
                     style={{
-                      color:
-                        "#cbd5e1",
+                      color: "white",
 
                       fontSize:
                         "18px",
@@ -346,6 +415,10 @@ export default function Leaderboard() {
 
                     marginBottom:
                       "8px",
+
+                    color: darkMode
+                      ? "#0f172a"
+                      : "white",
                   }}
                 >
                   {
@@ -379,6 +452,68 @@ export default function Leaderboard() {
           )
         )}
 
+      </div>
+
+      <br />
+      <br />
+      <br />
+
+      <div>
+
+        <Link
+          to="/"
+
+          style={{
+            textAlign:
+              "center",
+
+            color:
+              "#b6f509",
+
+            textDecoration:
+              "none",
+
+            marginTop:
+              "5px",
+
+            fontWeight:
+              "600",
+
+            background:
+              "rgba(255,255,255,0.08)",
+
+            borderRadius:
+              "10px",
+
+            padding:
+              "5px 10px",
+
+            border:
+              "1px solid #cbd5e1",
+
+          }}
+        >
+          ← Back to Home
+        </Link>
+
+      </div>
+
+      <div
+        style={{
+          marginTop:
+            "60px",
+
+          textAlign:
+            "center",
+
+          color:
+            "#cbd5e1",
+
+          fontSize:
+            "18px",
+        }}
+      >
+        © 2026 Placement Portal. All rights reserved.
       </div>
 
     </div>

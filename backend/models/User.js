@@ -22,11 +22,6 @@ const userSchema =
       default: 0,
     },
 
-    backlogs: {
-      type: Number,
-      default: 0,
-    },
-
     skills: {
       type: String,
       default: "",

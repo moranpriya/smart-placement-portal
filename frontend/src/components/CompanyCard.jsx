@@ -47,6 +47,7 @@ export default function CompanyCard({
           borderRadius: "20px",
           background: company.color,
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
           justifyContent: "center",
           fontSize: "38px",
@@ -96,7 +97,7 @@ export default function CompanyCard({
       <div
         style={{
           display: "inline-block",
-
+          
           padding: "10px 18px",
 
           borderRadius: "999px",

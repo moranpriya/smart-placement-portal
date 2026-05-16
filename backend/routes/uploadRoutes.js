@@ -5,6 +5,10 @@ const express = require(
 const router =
   express.Router();
 
+const fs = require(
+  "fs"
+);
+
 const upload = require(
   "../middleware/upload"
 );
@@ -29,6 +33,23 @@ router.post(
           req.params.id
         );
 
+      if (user.resume) {
+
+        const oldPath =
+          `uploads/${user.resume}`;
+
+        if (
+          fs.existsSync(
+            oldPath
+          )
+        ) {
+
+          fs.unlinkSync(
+            oldPath
+          );
+        }
+      }
+
       user.resume =
         req.file.filename;
 
@@ -37,6 +58,9 @@ router.post(
       res.json({
         message:
           "Resume Uploaded",
+
+        resume:
+          user.resume,
       });
 
     } catch (error) {

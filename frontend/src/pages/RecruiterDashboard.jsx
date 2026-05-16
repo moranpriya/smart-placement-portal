@@ -1,7 +1,16 @@
 import {
-    useState,
     useEffect,
+    useState,
+    useCallback,
 } from "react";
+
+import {
+    Link,
+} from "react-router-dom";
+
+import {
+    useTheme,
+} from "../context/ThemeContext";
 
 import API from "../services/api";
 
@@ -11,15 +20,22 @@ export default function RecruiterDashboard() {
         setJobs] =
         useState([]);
 
+    const {
+        darkMode,
+        setDarkMode,
+    } = useTheme();
+
+    const [applications,
+        setApplications] =
+        useState([]);
+
     const [formData,
         setFormData] =
         useState({
-            companyName: "",
             role: "",
             package: "",
             minCGPA: "",
             allowedBranches: "",
-            maxBacklogs: "",
             deadline: "",
             description: "",
         });
@@ -40,17 +56,37 @@ export default function RecruiterDashboard() {
         });
     };
 
-    const fetchJobs =
+    const fetchJobs = useCallback(
+
+        async () => {
+
+            try {
+
+                const res =
+                    await API.get("/companies");
+
+                setJobs(res.data);
+
+            } catch (error) {
+
+                console.log(error);
+            }
+        },
+
+        []
+    );
+
+    const fetchApplications =
         async () => {
 
             try {
 
                 const res =
                     await API.get(
-                        "/companies"
+                        "/applications/recruiter"
                     );
 
-                setJobs(
+                setApplications(
                     res.data
                 );
 
@@ -62,9 +98,40 @@ export default function RecruiterDashboard() {
 
     useEffect(() => {
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchJobs();
 
-    }, []);
+        fetchApplications();
+
+    }, [fetchJobs]);
+
+    const updateApplicationStatus =
+        async (
+            id,
+            status
+        ) => {
+
+            try {
+
+                await API.put(
+                    `/applications/${id}`,
+                    { status }
+                );
+
+                fetchApplications();
+
+            } catch (error) {
+
+                console.log(error);
+            }
+        };
+
+    useEffect(() => {
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchJobs();
+
+    }, [fetchJobs]);
 
     const handleSubmit =
         async (e) => {
@@ -79,7 +146,9 @@ export default function RecruiterDashboard() {
                         ...formData,
 
                         recruiter:
-                            user._id,
+                            user?._id,
+
+                        companyName: user?.companyName,
                     }
                 );
 
@@ -88,12 +157,10 @@ export default function RecruiterDashboard() {
                 );
 
                 setFormData({
-                    companyName: "",
                     role: "",
                     package: "",
                     minCGPA: "",
                     allowedBranches: "",
-                    maxBacklogs: "",
                     deadline: "",
                     description: "",
                 });
@@ -122,6 +189,42 @@ export default function RecruiterDashboard() {
             }}
         >
 
+            <button
+                onClick={() =>
+                    setDarkMode(!darkMode)
+                }
+
+                style={{
+                    position: "absolute",
+
+                    top: "20px",
+
+                    right: "200px",
+
+                    padding: "10px 14px",
+
+                    border: "none",
+
+                    borderRadius: "10px",
+
+                    background: darkMode
+                        ? "#facc15"
+                        : "#111827",
+
+                    color: darkMode
+                        ? "black"
+                        : "white",
+
+                    cursor: "pointer",
+
+                    fontWeight: "700",
+
+                    zIndex: "5",
+                }}
+            >
+                {darkMode ? "☀️ Light" : "🌙 Dark"}
+            </button>
+
             {/* HEADER */}
 
             <div
@@ -134,16 +237,29 @@ export default function RecruiterDashboard() {
                 }}
             >
 
+<br />
                 <h1
                     style={{
-                        fontSize:
-                            "72px",
+                        fontSize: "clamp(38px, 8vw, 72px)",
 
                         fontWeight:
                             "900",
 
                         marginBottom:
                             "10px",
+
+                        display: "flex",
+
+                        justifyContent: "center",
+
+                        flexWrap: "wrap",
+
+                        color: darkMode
+                            ? "#0f172a"
+                            : "white",
+
+                        WebkitTextStroke: "1px white",
+
                     }}
                 >
                     Recruiter Dashboard
@@ -157,8 +273,9 @@ export default function RecruiterDashboard() {
                         fontWeight:
                             "800",
 
-                        color:
-                            "black",
+                        color: darkMode
+                            ? "black"
+                            : "white",
                     }}
                 >
                     <br />
@@ -179,8 +296,9 @@ export default function RecruiterDashboard() {
                 }
 
                 style={{
-                    background:
-                        "rgba(255,255,255,0.12)",
+                    background: darkMode
+                        ? "rgba(15,23,42,0.1)"
+                        : "rgba(255,255,255,0.15)",
 
                     backdropFilter:
                         "blur(12px)",
@@ -195,7 +313,7 @@ export default function RecruiterDashboard() {
                         "50px",
 
                     border:
-                        "1px solid rgba(255,255,255,0.15)",
+                        "1px solid rgba(255,255,255,0.4)",
                 }}
             >
 
@@ -227,28 +345,12 @@ export default function RecruiterDashboard() {
                             "grid",
 
                         gridTemplateColumns:
-                            "repeat(3,1fr)",
+                            "repeat(auto-fit,minmax(300px,1fr))",
 
                         gap:
                             "20px",
                     }}
                 >
-
-                    <input
-                        type="text"
-                        name="companyName"
-                        placeholder="Company Name"
-
-                        value={
-                            formData.companyName
-                        }
-
-                        onChange={
-                            handleChange
-                        }
-
-                        style={input}
-                    />
 
                     <input
                         type="text"
@@ -263,7 +365,21 @@ export default function RecruiterDashboard() {
                             handleChange
                         }
 
-                        style={input}
+                        style={{
+                            ...input,
+
+                            background: darkMode
+                                ? "#1e293b"
+                                : "white",
+
+                            color: darkMode
+                                ? "white"
+                                : "black",
+
+                            border: darkMode
+                                ? "1px solid #cbd5e1"
+                                : "1px solid #94a3b8",
+                        }}
                     />
 
                     <input
@@ -279,7 +395,21 @@ export default function RecruiterDashboard() {
                             handleChange
                         }
 
-                        style={input}
+                        style={{
+                            ...input,
+
+                            background: darkMode
+                                ? "#1e293b"
+                                : "white",
+
+                            color: darkMode
+                                ? "white"
+                                : "black",
+
+                            border: darkMode
+                                ? "1px solid #cbd5e1"
+                                : "1px solid #94a3b8",
+                        }}
                     />
 
                     <input
@@ -295,7 +425,21 @@ export default function RecruiterDashboard() {
                             handleChange
                         }
 
-                        style={input}
+                        style={{
+                            ...input,
+
+                            background: darkMode
+                                ? "#1e293b"
+                                : "white",
+
+                            color: darkMode
+                                ? "white"
+                                : "black",
+
+                            border: darkMode
+                                ? "1px solid #cbd5e1"
+                                : "1px solid #94a3b8",
+                        }}
                     />
 
                     <input
@@ -311,23 +455,21 @@ export default function RecruiterDashboard() {
                             handleChange
                         }
 
-                        style={input}
-                    />
+                        style={{
+                            ...input,
 
-                    <input
-                        type="number"
-                        name="maxBacklogs"
-                        placeholder="Maximum Backlogs"
+                            background: darkMode
+                                ? "#1e293b"
+                                : "white",
 
-                        value={
-                            formData.maxBacklogs
-                        }
+                            color: darkMode
+                                ? "white"
+                                : "black",
 
-                        onChange={
-                            handleChange
-                        }
-
-                        style={input}
+                            border: darkMode
+                                ? "1px solid #cbd5e1"
+                                : "1px solid #94a3b8",
+                        }}
                     />
 
                     <input
@@ -342,7 +484,21 @@ export default function RecruiterDashboard() {
                             handleChange
                         }
 
-                        style={input}
+                        style={{
+                            ...input,
+
+                            background: darkMode
+                                ? "#1e293b"
+                                : "white",
+
+                            color: darkMode
+                                ? "white"
+                                : "black",
+
+                            border: darkMode
+                                ? "1px solid #cbd5e1"
+                                : "1px solid #94a3b8",
+                        }}
                     />
 
                 </div>
@@ -370,6 +526,20 @@ export default function RecruiterDashboard() {
 
                         width:
                             "100%",
+
+                        boxSizing: "border-box",
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
                     }}
                 />
 
@@ -433,7 +603,7 @@ export default function RecruiterDashboard() {
                         "grid",
 
                     gridTemplateColumns:
-                        "repeat(3,1fr)",
+                        "repeat(auto-fit,minmax(300px,1fr))",
 
                     gap:
                         "25px",
@@ -447,8 +617,17 @@ export default function RecruiterDashboard() {
                             key={job._id}
 
                             style={{
-                                background:
-                                    "rgba(17,24,39,0.75)",
+                                background: darkMode
+                                    ? "#1e293b"
+                                    : "white",
+
+                                color: darkMode
+                                    ? "white"
+                                    : "#0b1f59",
+
+                                border: darkMode
+                                    ? "1px solid #cbd5e1"
+                                    : "1px solid #94a3b8",
 
                                 backdropFilter:
                                     "blur(10px)",
@@ -459,9 +638,6 @@ export default function RecruiterDashboard() {
                                 padding:
                                     "25px",
 
-                                border:
-                                    "1px solid rgba(255,255,255,0.08)",
-
                                 boxShadow:
                                     "0 10px 30px rgba(0,0,0,0.25)",
                             }}
@@ -471,6 +647,8 @@ export default function RecruiterDashboard() {
                                 style={{
                                     display:
                                         "flex",
+
+                                    flexWrap: "wrap",
 
                                     justifyContent:
                                         "space-between",
@@ -485,61 +663,31 @@ export default function RecruiterDashboard() {
 
                                 <div>
 
-                                    <h2
-                                        style={{
-                                            margin:
-                                                "0",
+                                    <div>
+                                        <p
+                                            style={{
+                                                color: darkMode
+                                                    ? "white"
+                                                    : "#0b1f59",
 
-                                            fontSize:
-                                                "32px",
+                                                margin: "0",
 
-                                            fontWeight:
-                                                "800",
 
-                                            color:
-                                                "white",
-                                        }}
-                                    >
-                                        {
-                                            job.companyName
-                                        }
-                                    </h2>
+                                                fontWeight:
+                                                    "800",
 
-                                    <p
-                                        style={{
-                                            color:
-                                                "#9ca3af",
+                                                fontSize: "30px",
 
-                                            marginTop:
-                                                "8px",
-                                        }}
-                                    >
-                                        {
-                                            job.role
-                                        }
-                                    </p>
+                                                textAlign: "middle",
+                                            }}
+                                        >
+                                            {
+                                                job.role
+                                            }
+                                        </p>
 
-                                </div>
+                                    </div>
 
-                                <div
-                                    style={{
-                                        background:
-                                            "#22c55e",
-
-                                        padding:
-                                            "7px 14px",
-
-                                        borderRadius:
-                                            "999px",
-
-                                        fontWeight:
-                                            "700",
-
-                                        fontSize:
-                                            "14px",
-                                    }}
-                                >
-                                    Active
                                 </div>
 
                             </div>
@@ -585,16 +733,6 @@ export default function RecruiterDashboard() {
 
                                 <p>
                                     <strong>
-                                        Max Backlogs:
-                                    </strong>
-                                    {" "}
-                                    {
-                                        job.maxBacklogs
-                                    }
-                                </p>
-
-                                <p>
-                                    <strong>
                                         Package:
                                     </strong>
                                     {" "}
@@ -609,9 +747,6 @@ export default function RecruiterDashboard() {
 
                             <div
                                 style={{
-                                    background:
-                                        "rgba(31,41,55,0.8)",
-
                                     padding:
                                         "15px",
 
@@ -637,8 +772,9 @@ export default function RecruiterDashboard() {
 
                             <p
                                 style={{
-                                    color:
-                                        "#d1d5db",
+                                    color: darkMode
+                                        ? "#d1d5db"
+                                        : "black",
 
                                     lineHeight:
                                         "1.7",
@@ -649,9 +785,251 @@ export default function RecruiterDashboard() {
                                 }
                             </p>
 
+                            <br />
+
+                            <div
+                                style={{
+                                    background:
+                                        "#22c55e",
+
+                                    padding:
+                                        "7px 14px",
+
+                                    borderRadius:
+                                        "999px",
+
+                                    fontWeight:
+                                        "700",
+
+                                    fontSize:
+                                        "14px",
+                                }}
+                            >
+                                Active
+                            </div>
+
                         </div>
                     )
                 )}
+
+            </div>
+
+            <h2
+                style={{
+                    marginTop: "60px",
+
+                    marginBottom: "25px",
+
+                    fontSize: "42px",
+                }}
+            >
+                Applicants
+            </h2>
+
+            <div
+                style={{
+                    display: "grid",
+
+                    gap: "20px",
+                }}
+            >
+                {applications.map(
+                    (app) => (
+
+                        <div
+                            key={app._id}
+
+                            style={{
+                                background: darkMode
+                                    ? "#1e293b"
+                                    : "white",
+
+                                color: darkMode
+                                    ? "white"
+                                    : "black",
+
+                                border: darkMode
+                                    ? "1px solid #cbd5e1"
+                                    : "1px solid #94a3b8",
+
+                                padding: "20px",
+
+                                borderRadius: "16px",
+                            }}
+                        >
+
+                            <h3>
+                                {app.student?.name}
+                            </h3>
+
+                            <p>
+                                Email:
+                                {" "}
+                                {app.student?.email}
+                            </p>
+
+                            <p>
+                                Company:
+                                {" "}
+                                {app.company?.companyName}
+                            </p>
+
+                            <p>
+                                Status:
+                                {" "}
+
+                                <span
+                                    style={{
+                                        color:
+                                            app.status === "Approved"
+                                                ? "#22c55e"
+                                                : app.status === "Rejected"
+                                                    ? "#ef4444"
+                                                    : "#facc15",
+
+                                        fontWeight:
+                                            "700",
+                                    }}
+                                >
+                                    {
+                                        app.status.charAt(0).toUpperCase() +
+                                        app.status.slice(1)
+                                    }
+                                </span>
+                            </p>
+
+                            {app.student?.resume && (
+
+                                <a
+                                    href={`http://localhost:5000/uploads/${app.student.resume}`}
+
+                                    target="_blank"
+
+                                    rel="noreferrer"
+
+                                    style={{
+                                        color: "#60a5fa",
+
+                                        textDecoration:
+                                            "none",
+
+                                        fontWeight:
+                                            "600",
+                                    }}
+                                >
+                                    View Resume
+                                </a>
+                            )}
+
+                            <div
+                                style={{
+                                    display: "flex",
+
+                                    gap: "10px",
+
+                                    marginTop: "15px",
+                                }}
+                            >
+
+                                <button
+                                    onClick={() =>
+                                        updateApplicationStatus(
+                                            app._id,
+                                            "Approved"
+                                        )
+                                    }
+
+                                    style={{
+                                        background: "#22c55e",
+
+                                        color: "white",
+
+                                        border: "none",
+
+                                        padding: "10px 16px",
+
+                                        borderRadius: "10px",
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Approve
+                                </button>
+
+                                <button
+                                    onClick={() =>
+                                        updateApplicationStatus(
+                                            app._id,
+                                            "Rejected"
+                                        )
+                                    }
+
+                                    style={{
+                                        background: "#ef4444",
+
+                                        color: "white",
+
+                                        border: "none",
+
+                                        padding: "10px 16px",
+
+                                        borderRadius: "10px",
+
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    Reject
+                                </button>
+
+                            </div>
+
+                        </div>
+                    )
+                )}
+            </div>
+
+
+            <br />
+
+            <br />
+
+            <div>
+
+                <Link
+                    to="/"
+
+                    style={{
+                        textAlign:
+                            "center",
+
+                        color:
+                            "#b6f509",
+
+                        textDecoration:
+                            "none",
+
+                        marginTop:
+                            "5px",
+
+                        fontWeight:
+                            "600",
+
+                        background:
+                            "rgba(255,255,255,0.08)",
+
+                        borderRadius:
+                            "10px",
+
+                        padding:
+                            "5px 10px",
+
+                        border:
+                            "1px solid #cbd5e1",
+
+                    }}
+                >
+                    ← Back to Home
+                </Link>
 
             </div>
 
@@ -685,9 +1063,6 @@ const input = {
     borderRadius:
         "10px",
 
-    border:
-        "1px solid rgba(255,255,255,0.15)",
-
     fontSize:
         "16px",
 
@@ -695,10 +1070,10 @@ const input = {
         "none",
 
     background:
-    "#1e293b",
+        "#1e293b",
 
     border:
-        "1px solid #cbd5e1", 
+        "1px solid #cbd5e1",
 
     color:
         "#111827",

@@ -4,8 +4,10 @@ const express =
 const router =
   express.Router();
 
-const User =
-  require("../models/User");
+const Application =
+  require(
+    "../models/Application"
+  );
 
 router.get(
   "/",
@@ -17,19 +19,53 @@ router.get(
 
     try {
 
-      const students =
-        await User.find({
+      const placedStudents =
+        await Application.find({
 
-          role:
-            "student",
+          status:
+            "approved",
         })
 
-        .sort({
-          cgpa: -1,
-        });
+          .populate(
+            "student"
+          )
+
+          .populate(
+            "company"
+          );
+
+      const leaderboard =
+  placedStudents
+
+    .map(
+      (app) => ({
+
+        _id:
+          app._id,
+
+        name:
+          app.student?.name,
+
+        branch:
+          app.student?.branch,
+
+        company:
+          app.company?.companyName,
+
+        package:
+          Number(
+            app.company?.package
+          ) || 0,
+      })
+    )
+
+    .sort(
+      (a, b) =>
+        b.package - a.package
+    );
 
       res.json(
-        students
+        leaderboard
       );
 
     } catch (error) {

@@ -2,6 +2,10 @@ import {
   useNavigate,
 } from "react-router-dom";
 
+import {
+  useTheme,
+} from "../context/ThemeContext";
+
 import collegeLogo from "../assets/collegeLogo.jpg";
 
 import collegeBackground from "../assets/college.jpg";
@@ -10,6 +14,11 @@ export default function Home() {
 
   const navigate =
     useNavigate();
+
+  const {
+    darkMode,
+    setDarkMode,
+  } = useTheme();
 
   return (
 
@@ -21,6 +30,8 @@ export default function Home() {
         display:
           "flex",
 
+        flexWrap: "wrap",
+
         flexDirection:
           "column",
       }}
@@ -30,14 +41,21 @@ export default function Home() {
 
       <div
         style={{
-          background:
-            "white",
+          background: darkMode
+            ? "#111827"
+            : "white",
+
+          color: darkMode
+            ? "white"
+            : "#0b1f59",
 
           padding:
             "18px 30px",
 
           display:
             "flex",
+
+          flexWrap: "wrap",
 
           justifyContent:
             "space-between",
@@ -51,7 +69,7 @@ export default function Home() {
           width:
             "100%",
 
-          boxSizing: "border-box"
+          boxSizing: "border-box",
         }}
       >
 
@@ -61,6 +79,8 @@ export default function Home() {
           style={{
             display:
               "flex",
+
+            flexWrap: "wrap",
 
             alignItems:
               "center",
@@ -93,8 +113,9 @@ export default function Home() {
                 margin:
                   "0",
 
-                color:
-                  "#0b1f59",
+                color: darkMode
+                  ? "white"
+                  : "#0b1f59",
 
                 fontSize:
                   "30px",
@@ -114,8 +135,9 @@ export default function Home() {
                 marginTop:
                   "6px",
 
-                color:
-                  "#334155",
+                color: darkMode
+                  ? "#cbd5e1"
+                  : "#334155",
 
                 fontSize:
                   "17px",
@@ -135,8 +157,9 @@ export default function Home() {
 
         <h1
           style={{
-            color:
-              "#0f172a",
+            color: darkMode
+              ? "white"
+              : "#0f172a",
 
             fontSize:
               "30px",
@@ -157,6 +180,41 @@ export default function Home() {
           DEC PLACEMENT PORTAL
           <br />
         </h1>
+
+        <button
+          onClick={() =>
+            setDarkMode(!darkMode)
+          }
+
+          style={{
+
+            top: "20px",
+
+            right: "20px",
+
+            padding: "10px 14px",
+
+            border: "none",
+
+            borderRadius: "10px",
+
+            background: darkMode
+              ? "#facc15"
+              : "#111827",
+
+            color: darkMode
+              ? "black"
+              : "white",
+
+            cursor: "pointer",
+
+            fontWeight: "700",
+
+            zIndex: "5",
+          }}
+        >
+          {darkMode ? "☀️ Light" : "🌙 Dark"}
+        </button>
 
       </div>
 
@@ -195,7 +253,7 @@ export default function Home() {
               "grid",
 
             gridTemplateColumns:
-              "repeat(3, 350px)",
+              "repeat(auto-fit,minmax(300px,1fr))",
 
             justifyContent:
               "center",
@@ -212,8 +270,13 @@ export default function Home() {
                 key={card.title}
 
                 style={{
-                  background:
-                    "white",
+                  background: darkMode
+                    ? "#1e293b"
+                    : "white",
+
+                  color: darkMode
+                    ? "white"
+                    : "#0b1f59",
 
                   borderRadius:
                     "18px",
@@ -242,6 +305,8 @@ export default function Home() {
 
                     display:
                       "flex",
+
+                    flexWrap: "wrap",
 
                     justifyContent:
                       "center",
@@ -285,8 +350,9 @@ export default function Home() {
 
                   <p
                     style={{
-                      color:
-                        "#0f172a",
+                      color: darkMode
+                        ? "#e2e8f0"
+                        : "#0f172a",
 
                       lineHeight:
                         "1.8",
@@ -387,14 +453,13 @@ export default function Home() {
               display:
                 "flex",
 
+              flexWrap: "wrap",
+
               justifyContent:
                 "space-between",
 
               alignItems:
                 "center",
-
-              flexWrap:
-                "wrap",
 
               gap:
                 "30px",
@@ -572,7 +637,7 @@ const portalCards = [
       "Companies can register, post jobs and manage campus recruitment drives.",
 
     button:
-      "Recruiter Register",
+      "Recruiter Login",
 
     route:
       "/recruiter-login",

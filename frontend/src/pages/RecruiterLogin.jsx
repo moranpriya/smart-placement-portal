@@ -9,10 +9,19 @@ import {
 
 import API from "../services/api";
 
+import {
+    useTheme,
+} from "../context/ThemeContext";
+
 export default function RecruiterLogin() {
 
     const navigate =
         useNavigate();
+
+    const {
+        darkMode,
+        setDarkMode,
+    } = useTheme();
 
     const [formData,
         setFormData] =
@@ -90,19 +99,63 @@ export default function RecruiterLogin() {
 
         <div
             style={{
-                minHeight:
-                    "100vh",
+                minHeight: "100vh",
 
                 display:
                     "flex",
+
+                flexWrap: "wrap",
+
+                flexDirection:
+                    "column",
 
                 justifyContent:
                     "center",
 
                 alignItems:
                     "center",
+
+                padding:
+                    "40px",
             }}
         >
+
+            <button
+                onClick={() =>
+                    setDarkMode(!darkMode)
+                }
+
+                style={{
+                    position: "absolute",
+
+                    right: "200px",
+
+                    top: "20px",
+
+                    padding: "10px 14px",
+
+                    border: "none",
+
+                    borderRadius: "10px",
+
+                    background: darkMode
+                        ? "#facc15"
+                        : "#111827",
+
+                    color: darkMode
+                        ? "black"
+                        : "white",
+
+                    cursor: "pointer",
+
+                    fontWeight: "700",
+
+                    zIndex: "5",
+                }}
+            >
+                {darkMode ? "☀️ Light" : "🌙 Dark"}
+
+            </button>
 
             <form
                 onSubmit={
@@ -113,10 +166,6 @@ export default function RecruiterLogin() {
                     width:
                         "420px",
 
-                    backdropFilter:
-                        "blur(14px)",
-
-
                     padding:
                         "40px",
 
@@ -126,11 +175,26 @@ export default function RecruiterLogin() {
                     display:
                         "flex",
 
+                    flexWrap: "wrap",
+
                     flexDirection:
                         "column",
 
                     gap:
                         "18px",
+
+                    border:
+                        "1px solid rgba(255,255,255,0.4)",
+
+                    background: darkMode
+                        ? "rgba(15,23,42,0.1)"
+                        : "rgba(255,255,255,0.15)",
+
+                    color: darkMode
+                        ? "white"
+                        : "#0b1f59",
+
+                    backdropFilter: "blur(6px)",
                 }}
             >
 
@@ -142,14 +206,17 @@ export default function RecruiterLogin() {
                         marginBottom:
                             "10px",
 
-                        color:
-                            "white",
-
+                        color: darkMode
+                            ? "#0f172a"
+                            : "white",
                         fontSize: "45px",
 
                         position: "relative",
 
                         top: "-20px",
+
+                        WebkitTextStroke: "1px white",
+
                     }}
                 >
                     Recruiter Login
@@ -164,7 +231,21 @@ export default function RecruiterLogin() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <input
@@ -176,7 +257,21 @@ export default function RecruiterLogin() {
                         handleChange
                     }
 
-                    style={input}
+                    style={{
+                        ...input,
+
+                        background: darkMode
+                            ? "#1e293b"
+                            : "white",
+
+                        color: darkMode
+                            ? "white"
+                            : "black",
+
+                        border: darkMode
+                            ? "1px solid #cbd5e1"
+                            : "1px solid #94a3b8",
+                    }}
                 />
 
                 <button
@@ -189,6 +284,9 @@ export default function RecruiterLogin() {
 
                 <p
                     style={{
+                        color:
+                            "white",
+
                         textAlign:
                             "center",
 
@@ -205,7 +303,7 @@ export default function RecruiterLogin() {
 
                         style={{
                             color:
-                                "#2563eb",
+                                "#b6f509",
 
                             textDecoration:
                                 "none",
@@ -226,7 +324,7 @@ export default function RecruiterLogin() {
                             "center",
 
                         color:
-                            "#2563eb",
+                            "#b6f509",
 
                         textDecoration:
                             "none",
@@ -243,7 +341,25 @@ export default function RecruiterLogin() {
 
             </form>
 
+            <div
+                style={{
+                    marginTop:
+                        "60px",
+
+                    textAlign:
+                        "center",
+
+                    color:
+                        "#cbd5e1",
+
+                    fontSize:
+                        "18px",
+                }}
+            >
+                © 2026 Placement Portal. All rights reserved.
+            </div>
         </div>
+
     );
 }
 
@@ -262,7 +378,7 @@ const input = {
         "16px",
 
     background:
-    "#1e293b",    
+        "#1e293b",
 };
 
 const button = {

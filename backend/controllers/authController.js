@@ -27,7 +27,6 @@ const registerUser =
         name,
         branch,
         cgpa,
-        backlogs,
         batch,
 
         /* RECRUITER */
@@ -72,7 +71,6 @@ const registerUser =
           name,
           branch,
           cgpa,
-          backlogs,
           batch,
 
           /* RECRUITER */
