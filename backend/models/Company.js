@@ -3,6 +3,7 @@ const mongoose =
 
 const companySchema =
   new mongoose.Schema({
+
     companyName: {
       type: String,
 
@@ -38,6 +39,16 @@ const companySchema =
     deadline: {
       type: String,
     },
+
+    recruiter: {
+      type:
+        mongoose.Schema.Types.ObjectId,
+
+      ref: "User",
+
+      required: true,
+    },
+
   });
 
 module.exports =

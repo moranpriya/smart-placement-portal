@@ -40,9 +40,15 @@ export default function RecruiterDashboard() {
             description: "",
         });
 
-    const user = JSON.parse(
-        localStorage.getItem("user")
-    );
+    const userData =
+        JSON.parse(
+            localStorage.getItem("user")
+        );
+
+    const user =
+        userData?.user || userData;
+
+    console.log(user);
 
     const handleChange = (
         e
@@ -63,13 +69,15 @@ export default function RecruiterDashboard() {
             try {
 
                 const res =
-                    await API.get("/companies");
+                    await API.get(
+                        `/companies/recruiter/${user?._id}`
+                    );
 
                 setJobs(res.data);
 
             } catch (error) {
 
-                console.log(error);
+                console.log(error.response?.data);
             }
         },
 
@@ -83,7 +91,7 @@ export default function RecruiterDashboard() {
 
                 const res =
                     await API.get(
-                        "/applications/recruiter"
+                        `/applications/recruiter/${user?._id}`
                     );
 
                 setApplications(
@@ -92,7 +100,7 @@ export default function RecruiterDashboard() {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(error.response?.data);
             }
         };
 
@@ -122,7 +130,7 @@ export default function RecruiterDashboard() {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(error.response?.data);
             }
         };
 
@@ -146,7 +154,7 @@ export default function RecruiterDashboard() {
                         ...formData,
 
                         recruiter:
-                            user?._id,
+                            user?._id || user?.id,
 
                         companyName: user?.companyName,
                     }
@@ -169,7 +177,7 @@ export default function RecruiterDashboard() {
 
             } catch (error) {
 
-                console.log(error);
+                console.log(error.response?.data);
 
                 alert(
                     "Failed To Post Job"
@@ -237,7 +245,7 @@ export default function RecruiterDashboard() {
                 }}
             >
 
-<br />
+                <br />
                 <h1
                     style={{
                         fontSize: "clamp(38px, 8vw, 72px)",

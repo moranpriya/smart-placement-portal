@@ -8,24 +8,25 @@ const Application = require(
 
 const applyToCompany =
   async (req, res) => {
+
     try {
+
       const {
         studentId,
         companyId,
       } = req.body;
 
       const existing =
-        await Application.findOne(
-          {
-            student:
-              studentId,
+        await Application.findOne({
+          student:
+            studentId,
 
-            company:
-              companyId,
-          }
-        );
+          company:
+            companyId,
+        });
 
       if (existing) {
+
         return res
           .status(400)
           .json({
@@ -35,22 +36,22 @@ const applyToCompany =
       }
 
       const application =
-        await Application.create(
-          {
-            student:
-              studentId,
+        await Application.create({
+          student:
+            studentId,
 
-            company:
-              companyId,
-          }
-        );
+          company:
+            companyId,
+        });
 
       res.json(
         application
       );
-    } 
-    catch (error) {
+
+    } catch (error) {
+
       console.log(error);
+
       res.status(500).json({
         message:
           error.message,
@@ -60,21 +61,23 @@ const applyToCompany =
 
 const getApplications =
   async (req, res) => {
+
     try {
+
       const applications =
-        await Application.find(
-          {
-            student:
-              req.params.id,
-          }
-        ).populate(
+        await Application.find({
+          student:
+            req.params.id,
+        }).populate(
           "company"
         );
 
       res.json(
         applications
       );
+
     } catch (error) {
+
       res.status(500).json({
         message:
           error.message,
@@ -84,12 +87,16 @@ const getApplications =
 
 const getAllApplications =
   async (req, res) => {
+
     try {
+
       const applications =
         await Application.find()
+
           .populate(
             "student"
           )
+
           .populate(
             "company"
           );
@@ -97,8 +104,11 @@ const getAllApplications =
       res.json(
         applications
       );
+
     } catch (error) {
+
       console.log(error);
+
       res.status(500).json({
         message:
           error.message,
@@ -108,9 +118,12 @@ const getAllApplications =
 
 const updateStatus =
   async (req, res) => {
+
     try {
+
       const application =
         await Application.findByIdAndUpdate(
+
           req.params.id,
 
           {
@@ -129,6 +142,7 @@ const updateStatus =
         );
 
       await sendMail(
+
         populated.student.email,
 
         `Application ${req.body.status}`,
@@ -145,8 +159,11 @@ Best wishes for your placement journey.`
       res.json(
         application
       );
+
     } catch (error) {
+
       console.log(error);
+
       res.status(500).json({
         message:
           error.message,
@@ -156,52 +173,55 @@ Best wishes for your placement journey.`
 
 const getStats =
   async (req, res) => {
+
     try {
+
       const total =
         await Application.countDocuments();
 
       const approved =
-        await Application.countDocuments(
-          {
-            status:
-              "approved",
-          }
-        );
+        await Application.countDocuments({
+          status:
+            "Approved",
+        });
 
       const rejected =
-        await Application.countDocuments(
-          {
-            status:
-              "rejected",
-          }
-        );
+        await Application.countDocuments({
+          status:
+            "Rejected",
+        });
 
       const pending =
-        await Application.countDocuments(
-          {
-            status:
-              "pending",
-          }
-        );
+        await Application.countDocuments({
+          status:
+            "Applied",
+        });
 
       const percentage =
         total > 0
           ? (
-              (approved /
-                total) *
+              (approved / total) *
               100
             ).toFixed(2)
           : 0;
 
       res.json({
+
         total,
+
         approved,
+
         rejected,
+
         pending,
+
         percentage,
       });
+
     } catch (error) {
+
       console.log(error);
+
       res.status(500).json({
         message:
           error.message,
@@ -225,8 +245,16 @@ const getRecruiterApplications =
             "company"
           );
 
+      const filtered =
+        applications.filter(
+          (app) =>
+
+            app.company?.recruiter?.toString() ===
+            req.params.id
+        );
+
       res.json(
-        applications
+        filtered
       );
 
     } catch (error) {
@@ -239,6 +267,7 @@ const getRecruiterApplications =
   };
 
 module.exports = {
+
   applyToCompany,
 
   getApplications,

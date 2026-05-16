@@ -13,6 +13,39 @@ router.get("/", getCompanies);
 
 router.post("/", addCompany);
 
+const Company = require(
+  "../models/Company"
+);
+
+router.get(
+  "/recruiter/:id",
+
+  async (req, res) => {
+
+    try {
+
+      const companies =
+        await Company.find({
+          recruiter:
+            req.params.id,
+        });
+
+      res.json(
+        companies
+      );
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+    }
+  }
+);
+
 router.get(
   "/leaderboard/data",
 
@@ -51,6 +84,37 @@ router.get(
       res.json(leaderboard);
 
     } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message:
+          error.message,
+      });
+    }
+  }
+);
+
+router.get(
+  "/recruiter/:id",
+
+  async (req, res) => {
+
+    try {
+
+      const Company =
+        require("../models/Company");
+
+      const companies =
+        await Company.find({
+
+          recruiter:
+            req.params.id,
+        });
+
+      res.json(companies);
+
+    } catch (error) {
+
       console.log(error);
 
       res.status(500).json({

@@ -52,6 +52,8 @@ const addCompany = async (
         });
     }
 
+    console.log(req.body);
+
     const company =
       await Company.create(
         req.body

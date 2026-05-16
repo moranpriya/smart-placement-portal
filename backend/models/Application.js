@@ -7,8 +7,7 @@ const applicationSchema =
     {
       student: {
         type:
-          mongoose.Schema.Types
-            .ObjectId,
+          mongoose.Schema.Types.ObjectId,
 
         ref: "User",
 
@@ -17,8 +16,7 @@ const applicationSchema =
 
       company: {
         type:
-          mongoose.Schema.Types
-            .ObjectId,
+          mongoose.Schema.Types.ObjectId,
 
         ref: "Company",
 
@@ -30,9 +28,8 @@ const applicationSchema =
 
         enum: [
           "Applied",
-          "Shortlisted",
+          "Approved",
           "Rejected",
-          "Selected",
         ],
 
         default: "Applied",
