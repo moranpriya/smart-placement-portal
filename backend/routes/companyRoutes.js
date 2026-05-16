@@ -54,7 +54,7 @@ router.get(
 
       const applications =
         await Application.find({
-          status: "approved",
+          status: "Approved",
         })
           .populate("student")
           .populate("company");

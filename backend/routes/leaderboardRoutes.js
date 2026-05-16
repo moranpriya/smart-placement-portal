@@ -23,7 +23,7 @@ router.get(
         await Application.find({
 
           status:
-            "approved",
+            "Approved",
         })
 
           .populate(

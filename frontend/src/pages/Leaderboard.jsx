@@ -26,12 +26,6 @@ export default function Leaderboard() {
   const [loading, setLoading] =
     useState(true);
 
-  useEffect(() => {
-
-    fetchLeaderboard();
-
-  }, []);
-
   const fetchLeaderboard =
     async () => {
 
@@ -63,6 +57,14 @@ export default function Leaderboard() {
         );
       }
     };
+
+
+  useEffect(() => {
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchLeaderboard();
+
+  }, []);
 
   return (
 
@@ -131,10 +133,14 @@ export default function Leaderboard() {
         <h1
           style={{
             fontSize:
-              "64px",
+              "57px",
+
+
+            wordBreak:
+              "break-word",
 
             fontWeight:
-              "900",
+              "800",
 
             marginBottom:
               "10px",
@@ -237,8 +243,8 @@ export default function Leaderboard() {
 
               style={{
                 background: darkMode
-            ? "rgba(15,23,42,0.1)"
-            : "rgba(255,255,255,0.15)",
+                  ? "rgba(15,23,42,0.1)"
+                  : "rgba(255,255,255,0.15)",
 
                 border:
                   "1px solid rgba(255,255,255,0.4)",
