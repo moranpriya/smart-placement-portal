@@ -1,6 +1,7 @@
 import {
   useEffect,
   useState,
+  useCallback,
 } from "react";
 
 import {
@@ -12,10 +13,9 @@ import API from "../services/api";
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 export default function Dashboard() {
-
   const [companies,
     setCompanies] =
     useState([]);
@@ -35,133 +35,130 @@ export default function Dashboard() {
     setResume] =
     useState(null);
 
-  const user = useState(
-    JSON.parse(
-      localStorage.getItem("user")
-    )
-  )[0];
+  const [user, setUser] =
+    useState(
+      JSON.parse(
+        localStorage.getItem("user")
+      )
+    );
 
   const fetchCompanies =
-    async () => {
+    useCallback(
+      async () => {
 
-      try {
+        try {
 
-        const res =
-          await API.get(
-            "/companies"
+          const res =
+            await API.get(
+              "/companies"
+            );
+
+          setCompanies(
+            res.data
           );
 
-        setCompanies(
-          res.data
-        );
+        } catch (error) {
 
-      } catch (error) {
-
-        console.log(error);
-      }
-    };
+          console.log(error);
+        }
+      },
+      []
+    );
 
   const fetchApplications =
-    async () => {
+    useCallback(
+      async () => {
 
-      try {
+        try {
 
-        const res =
-          await API.get(
-            `/applications/${user._id}`
+          const res =
+            await API.get(
+              `/applications/${user._id}`
+            );
+
+          setApplications(
+            res.data
           );
 
-        setApplications(
-          res.data
-        );
+        } catch (error) {
 
-      } catch (error) {
-
-        console.log(error);
-      }
-    };
+          console.log(error);
+        }
+      },
+      []
+    );
 
   useEffect(() => {
 
-    let mounted = true;
-
     const loadData =
       async () => {
-
-        if (!mounted) return;
-
         await fetchCompanies();
-
         if (user?._id) {
-
           await fetchApplications();
         }
       };
-
     loadData();
+  }, [
+    user?._id,
+    fetchCompanies,
+    fetchApplications
+  ]);
 
-    return () => {
+  const uploadResume =
+    async () => {
 
-      mounted = false;
-    };
+      if (!resume) {
 
-  }, []);
+        return alert(
+          "Select Resume"
+        );
+      }
 
-const uploadResume =
-  async () => {
+      const data =
+        new FormData();
 
-    if (!resume) {
-
-      return alert(
-        "Select Resume"
+      data.append(
+        "resume",
+        resume
       );
-    }
 
-    const data =
-      new FormData();
+      try {
 
-    data.append(
-      "resume",
-      resume
-    );
+        const res =
+          await API.post(
+            `/upload/resume/${user._id}`,
+            data
+          );
 
-    try {
-
-      const res =
-        await API.post(
-          `/upload/resume/${user._id}`,
-          data
+        alert(
+          "Resume Uploaded Successfully"
         );
 
-      alert(
-        "Resume Uploaded Successfully"
-      );
+        const updatedUser = {
+          ...user,
 
-      const updatedUser = {
-        ...user,
+          resume:
+            res.data.resume,
+        };
 
-        resume:
-          res.data.resume,
-      };
+        localStorage.setItem(
+          "user",
+          JSON.stringify(
+            updatedUser
+          )
+        );
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(
-          updatedUser
-        )
-      );
+        setUser(updatedUser);
 
-      window.location.reload();
+      } catch (error) {
 
-    } catch (error) {
+        console.log(error);
 
-      console.log(error);
-
-      alert(
-        "Upload Failed"
-      );
-    }
-  };
+        alert(
+          "Upload Failed"
+        );
+      }
+    };
 
   const alreadyApplied =
     (
@@ -204,6 +201,9 @@ const uploadResume =
         console.log(error);
 
         alert(
+
+          error.response?.data?.message ||
+
           "Application Failed"
         );
       }
@@ -259,11 +259,8 @@ const uploadResume =
       >
         {darkMode ? "☀️ Light" : "🌙 Dark"}
       </button>
-      
 
       <br />
-
-
 
       <div
         style={{
@@ -545,7 +542,7 @@ const uploadResume =
             display:
               "flex",
             flexWrap: "wrap",
-            
+
             flexDirection:
               "column",
 
@@ -892,41 +889,51 @@ const uploadResume =
                   }}
                 >
 
+                  {
+                    new Date(company.deadline) <
+                      new Date() ? (
 
+                      <button
+                        disabled
+                        style={{
+                          ...applyButton,
+                          background: "#ef4444",
+                        }}
+                      >
+                        Deadline Passed
+                      </button>
 
-                  {alreadyApplied(
-                    company._id
-                  ) ? (
+                    ) : alreadyApplied(
+                      company._id
+                    ) ? (
 
-                    <button
-                      disabled
-                      style={{
-                        ...applyButton,
+                      <button
+                        disabled
+                        style={{
+                          ...applyButton,
+                          background: "#334155",
+                        }}
+                      >
+                        Applied
+                      </button>
 
-                        background:
-                          "#334155",
-                      }}
-                    >
-                      Applied
-                    </button>
+                    ) : (
 
-                  ) : (
+                      <button
+                        onClick={() =>
+                          applyCompany(
+                            company._id
+                          )
+                        }
 
-                    <button
-                      onClick={() =>
-                        applyCompany(
-                          company._id
-                        )
-                      }
+                        style={{
+                          ...applyButton,
+                        }}
+                      >
+                        Apply Now
+                      </button>
 
-                      style={{
-                        ...applyButton,
-                      }}
-                    >
-                      Apply Now
-                    </button>
-
-                  )}
+                    )}
 
                 </div>
 

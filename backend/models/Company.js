@@ -17,8 +17,7 @@ const companySchema =
     },
 
     package: {
-      type: String,
-
+      type: Number,
       required: true,
     },
 
@@ -37,16 +36,7 @@ const companySchema =
     },
 
     deadline: {
-      type: String,
-    },
-
-    recruiter: {
-      type:
-        mongoose.Schema.Types.ObjectId,
-
-      ref: "User",
-
-      required: true,
+      type: Date,
     },
 
   });

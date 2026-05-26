@@ -5,7 +5,7 @@ import {
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 import bgImage from "../assets/college.jpg";
 

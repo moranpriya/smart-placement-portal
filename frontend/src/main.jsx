@@ -10,7 +10,7 @@ import AuthProvider from "./context/AuthContext";
 
 import {
     ThemeProvider,
-} from "./context/ThemeContext";
+} from "./context/ThemeProvider";
 
 ReactDOM.createRoot(
   document.getElementById("root")

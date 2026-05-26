@@ -11,7 +11,7 @@ import API from "../services/api";
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 export default function Leaderboard() {
 
@@ -60,10 +60,11 @@ export default function Leaderboard() {
 
 
   useEffect(() => {
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchLeaderboard();
-
+    const loadLeaderboard =
+      async () => {
+        await fetchLeaderboard();
+      };
+    loadLeaderboard();
   }, []);
 
   return (

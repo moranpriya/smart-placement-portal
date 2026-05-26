@@ -9,7 +9,7 @@ import {
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 import API from "../services/api";
 
@@ -59,9 +59,11 @@ export default function Experiences() {
     };
 
   useEffect(() => {
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchExperiences();
+    const loadExperiences =
+      async () => {
+        await fetchExperiences();
+      };
+    loadExperiences();
 
   }, []);
 

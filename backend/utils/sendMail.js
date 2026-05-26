@@ -7,6 +7,7 @@ const transporter =
     service: "gmail",
 
     auth: {
+
       user:
         process.env.EMAIL_USER,
 
@@ -22,16 +23,32 @@ const sendMail =
     text
   ) => {
 
-    await transporter.sendMail({
-      from:
-        process.env.EMAIL_USER,
+    try {
 
-      to,
+      await transporter.sendMail({
 
-      subject,
+        from:
+          process.env.EMAIL_USER,
 
-      text,
-    });
+        to,
+
+        subject,
+
+        text,
+
+        html: `
+          <h2>${subject}</h2>
+          <p>${text}</p>
+        `,
+      });
+
+    } catch (error) {
+
+      console.log(
+        "Mail Error:",
+        error.message
+      );
+    }
   };
 
 module.exports =

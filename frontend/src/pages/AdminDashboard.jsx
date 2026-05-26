@@ -10,7 +10,7 @@ import {
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 import API from "../services/api";
 
@@ -39,19 +39,89 @@ export default function AdminDashboard() {
   const [stats, setStats] =
     useState({});
 
-  const fetchCompanies = useCallback(
+  const [applications,
+    setApplications] =
+    useState([]);
 
-    async () => {
+  const [formData,
+    setFormData] =
+    useState({
+      companyName: "",
+      role: "",
+      package: "",
+      minCGPA: "",
+      allowedBranches: "",
+      deadline: "",
+      description: "",
+    });
+
+  const handleChange =
+    (e) => {
+
+      setFormData({
+        ...formData,
+
+        [e.target.name]:
+          e.target.value,
+      });
+    };
+
+  const handleSubmit =
+    async (e) => {
+
+      e.preventDefault();
 
       try {
 
-        const res =
-          await API.get("/companies");
+        await API.post("/companies", {
 
-        setCompanies(res.data);
+          ...formData,
+
+          recruiter:
+            "684f123456789abcdef1234",
+
+          allowedBranches:
+            formData.allowedBranches
+              .split(",")
+              .map((branch) =>
+                branch.trim()
+              ),
+        });
+
+        alert(
+          "Job Posted Successfully"
+        );
+
+        setFormData({
+          companyName: "",
+          role: "",
+          package: "",
+          minCGPA: "",
+          allowedBranches: "",
+          deadline: "",
+          description: "",
+        });
+
+        fetchCompanies();
 
       } catch (error) {
 
+        console.log(error);
+
+        alert(
+          "Failed To Post Job"
+        );
+      }
+    };
+
+  const fetchCompanies = useCallback(
+    async () => {
+      try {
+        const res =
+          await API.get("/companies");
+        setCompanies(res.data);
+
+      } catch (error) {
         console.log(error);
       }
     },
@@ -77,16 +147,44 @@ export default function AdminDashboard() {
     []
   );
 
+  const fetchApplications =
+    useCallback(
+      async () => {
+
+        try {
+
+          const res =
+            await API.get(
+              "/applications/all"
+            );
+
+          setApplications(
+            res.data
+          );
+
+        } catch (error) {
+
+          console.log(error);
+        }
+      },
+
+      []
+    );
+
   useEffect(() => {
+    const loadData =
+      async () => {
+        await fetchCompanies();
+        await fetchStats();
+        await fetchApplications();
+      };
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchCompanies();
-
-    fetchStats();
+    loadData();
 
   }, [
     fetchCompanies,
-    fetchStats
+    fetchStats,
+    fetchApplications,
   ]);
 
   const chartData = [
@@ -108,6 +206,30 @@ export default function AdminDashboard() {
         stats.pending || 0,
     },
   ];
+
+  const updateApplicationStatus =
+    async (id, status) => {
+
+      try {
+
+        await API.put(
+
+          `/applications/${id}`,
+
+          {
+            status,
+          }
+        );
+
+        fetchApplications();
+
+        fetchStats();
+
+      } catch (error) {
+
+        console.log(error);
+      }
+    };
 
   const COLORS = [
     "#22c55e",
@@ -166,7 +288,7 @@ export default function AdminDashboard() {
 
       <h1
         style={{
-          fontSize: "50px",
+          fontSize: "60px",
 
           marginBottom:
             "30px",
@@ -180,6 +302,226 @@ export default function AdminDashboard() {
       >
         Admin Dashboard
       </h1>
+
+      <br />
+
+      <form
+        onSubmit={handleSubmit}
+
+        style={{
+          background: darkMode
+            ? "rgba(15,23,42,0.1)"
+            : "rgba(255,255,255,0.15)",
+
+          color: darkMode
+            ? "white"
+            : "#0b1f59",
+
+          backdropFilter: "blur(6px)",
+
+          border: darkMode
+            ? "1px solid #cbd5e1"
+            : "1px solid #94a3b8",
+
+          padding: "30px",
+
+          borderRadius: "20px",
+
+          marginBottom: "40px",
+
+          display: "grid",
+
+          gap: "15px",
+        }}
+      >
+
+        <h2>
+          Post New Job
+        </h2>
+
+        <input
+          type="text"
+          name="companyName"
+          placeholder="Company Name"
+          value={formData.companyName}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <input
+          type="text"
+          name="role"
+          placeholder="Role"
+          value={formData.role}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <input
+          type="number"
+          name="package"
+          placeholder="Package"
+          value={formData.package}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <input
+          type="number"
+          name="minCGPA"
+          placeholder="Minimum CGPA"
+          value={formData.minCGPA}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <input
+          type="text"
+          name="allowedBranches"
+          placeholder="Allowed Branches (CSE,ECE,ME)"
+          value={formData.allowedBranches}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <input
+          type="date"
+          name="deadline"
+          value={formData.deadline}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: "#757576",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <textarea
+          name="description"
+          placeholder="Job Description"
+          value={formData.description}
+          onChange={handleChange}
+          style={{
+            ...inputStyle,
+
+            minHeight: "120px",
+
+            background: darkMode
+              ? "#1e293b"
+              : "white",
+
+            color: darkMode
+              ? "white"
+              : "black",
+
+            border: darkMode
+              ? "1px solid #cbd5e1"
+              : "1px solid #94a3b8",
+          }}
+          required
+        />
+
+        <button
+          type="submit"
+
+          style={{
+            padding: "14px",
+
+            border: "none",
+
+            borderRadius: "12px",
+
+            background: "#2563eb",
+
+            color: "white",
+
+            fontWeight: "700",
+
+            cursor: "pointer",
+          }}
+        >
+          Post Job
+        </button>
+
+      </form>
 
       <br />
 
@@ -439,7 +781,7 @@ export default function AdminDashboard() {
           WebkitTextStroke: "1px white",
         }}
       >
-        Recruiter Advertisements
+        Placement Opportunities
       </h2>
 
       <div
@@ -447,7 +789,7 @@ export default function AdminDashboard() {
           display: "grid",
 
           gridTemplateColumns:
-            "repeat(3,1fr)",
+            "repeat(auto-fit,minmax(320px,1fr))",
 
           gap: "30px",
 
@@ -604,25 +946,286 @@ export default function AdminDashboard() {
             <div
               style={{
                 background:
-                  "#22c55e",
+                  new Date(company.deadline) <
+                    new Date()
+
+                    ? "#ef4444"
+                    : "#22c55e",
 
                 padding:
-                  "7px 14px",
+                  "10px 0px",
 
                 borderRadius:
-                  "999px",
+                  "10px",
 
                 fontWeight:
                   "700",
 
                 fontSize:
-                  "14px",
+                  "15px",
+
+                color:
+                  "white",
+
+                textAlign:
+                  "center",
+
+                marginTop:
+                  "10px",
+
+                alignSelf:
+                  "flex-start",
+
+                width:
+                  "100%",
               }}
             >
-              Active
+              {
+                new Date(company.deadline) <
+                  new Date()
+
+                  ? "Closed"
+                  : "Active"
+              }
             </div>
           </div>
         ))}
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+
+          gap: "20px",
+
+          marginBottom: "40px",
+
+          flexWrap: "wrap",
+        }}
+      >
+
+      </div>
+
+      <h2
+        style={{
+          marginBottom:
+            "35px",
+
+          fontSize:
+            "40px",
+
+          color: darkMode
+            ? "black"
+            : "white",
+
+          WebkitTextStroke:
+            "1px white",
+        }}
+      >
+        Student Applications
+      </h2>
+
+      <br />
+
+      <div
+        style={{
+          display:
+            "grid",
+
+          gap:
+            "25px",
+
+          marginBottom:
+            "50px",
+        }}
+      >
+
+        {applications.map((app) => (
+
+          <div
+            key={app._id}
+
+            style={{
+              background: darkMode
+                ? "#1e293b"
+                : "white",
+
+              color: darkMode
+                ? "white"
+                : "black",
+
+              border: darkMode
+                ? "1px solid #cbd5e1"
+                : "1px solid #94a3b8",
+
+              borderRadius:
+                "20px",
+
+              padding:
+                "25px",
+            }}
+          >
+
+            <h2
+              style={{
+                marginBottom:
+                  "10px",
+
+                color: darkMode
+                  ? "white"
+                  : "#0f172a",
+
+
+              }}
+            >
+              {app.student?.name}
+            </h2>
+
+            <p>
+              Email:
+              {" "}
+              {app.student?.email}
+            </p>
+
+            <p>
+              Company:
+              {" "}
+              {app.company?.companyName}
+            </p>
+
+            <p>
+              Role:
+              {" "}
+              {app.company?.role}
+            </p>
+
+            <a
+              href={`http://localhost:5000/uploads/${app.student?.resume}`}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                color: "#60a5fa",
+                textDecoration: "none",
+                fontWeight: "700",
+                fontSize: "17px",
+              }}
+            >
+              View Resume
+            </a>
+
+            <p
+              style={{
+                marginTop:
+                  "10px",
+
+                fontWeight:
+                  "700",
+
+                color:
+                  app.status ===
+                    "Approved"
+
+                    ? "#22c55e"
+
+                    : app.status ===
+                      "Rejected"
+
+                      ? "#ef4444"
+
+                      : "#facc15",
+              }}
+            >
+              Status:
+              {" "}
+              {app.status}
+            </p>
+
+            <div
+              style={{
+                display:
+                  "flex",
+
+                gap:
+                  "15px",
+
+                marginTop:
+                  "20px",
+              }}
+            >
+
+              <button
+                onClick={() =>
+                  updateApplicationStatus(
+                    app._id,
+                    "Approved"
+                  )
+                }
+
+                style={{
+                  background:
+                    "#22c55e",
+
+                  border:
+                    "none",
+
+                  padding:
+                    "10px 18px",
+
+                  borderRadius:
+                    "12px",
+
+                  color:
+                    "white",
+
+                  fontWeight:
+                    "700",
+
+                  cursor:
+                    "pointer",
+                }}
+              >
+                Approve
+              </button>
+
+              <button
+                onClick={() =>
+                  updateApplicationStatus(
+                    app._id,
+                    "Rejected"
+                  )
+                }
+
+                style={{
+                  background:
+                    "#ef4444",
+
+                  border:
+                    "none",
+
+                  padding:
+                    "10px 18px",
+
+                  borderRadius:
+                    "12px",
+
+                  color:
+                    "white",
+
+                  fontWeight:
+                    "700",
+
+                  cursor:
+                    "pointer",
+                }}
+              >
+                Reject
+              </button>
+
+            </div>
+
+          </div>
+        ))}
+
       </div>
 
       <br />
@@ -738,3 +1341,11 @@ function StatCard({
     </div>
   );
 }
+
+const inputStyle = {
+  padding: "14px",
+  borderRadius: "12px",
+  border: "1px solid #cbd5e1",
+  outline: "none",
+  fontSize: "16px",
+};

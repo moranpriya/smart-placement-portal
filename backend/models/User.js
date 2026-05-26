@@ -4,9 +4,6 @@ const mongoose = require(
 
 const userSchema =
   new mongoose.Schema({
-
-    /* STUDENT DETAILS */
-
     name: {
       type: String,
       default: "",
@@ -22,8 +19,13 @@ const userSchema =
       default: 0,
     },
 
-    skills: {
+    batch: {
       type: String,
+      default: "",
+    },
+
+    skills: {
+      type: [String],
       default: "",
     },
 
@@ -52,39 +54,17 @@ const userSchema =
       default: "",
     },
 
-    /* RECRUITER DETAILS */
-
-    companyName: {
-      type: String,
-      default: "",
-    },
-
-    hrName: {
-      type: String,
-      default: "",
-    },
-
-    website: {
-      type: String,
-      default: "",
-    },
-
-    companyType: {
-      type: String,
-      default: "",
-    },
-
-    /* COMMON */
-
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
     },
 
     password: {
       type: String,
       required: true,
+      minlength: 6,
     },
 
     role: {

@@ -10,7 +10,7 @@ import API from "../services/api";
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 export default function ResumeBuilder() {
 

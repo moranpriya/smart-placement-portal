@@ -1,3 +1,11 @@
+const User = require(
+  "../models/User"
+);
+
+const Company = require(
+  "../models/Company"
+);
+
 const sendMail = require(
   "../utils/sendMail"
 );
@@ -35,8 +43,66 @@ const applyToCompany =
           });
       }
 
+      const student =
+        await User.findById(
+          studentId
+        );
+
+      const company =
+        await Company.findById(
+          companyId
+        );
+
+      if (!student) {
+
+        return res
+          .status(404)
+          .json({
+            message:
+              "Student Not Found",
+          });
+      }
+
+      if (!company) {
+
+        return res
+          .status(404)
+          .json({
+            message:
+              "Company Not Found",
+          });
+      }
+
+      if (
+        student.cgpa <
+        company.minCGPA
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            message:
+              "Not Eligible : CGPA Criteria Failed",
+          });
+      }
+
+      if (
+        !company.allowedBranches.includes(
+          student.branch
+        )
+      ) {
+
+        return res
+          .status(400)
+          .json({
+            message:
+              "Not Eligible : Branch Criteria Failed",
+          });
+      }
+
       const application =
         await Application.create({
+
           student:
             studentId,
 
@@ -200,21 +266,16 @@ const getStats =
       const percentage =
         total > 0
           ? (
-              (approved / total) *
-              100
-            ).toFixed(2)
+            (approved / total) *
+            100
+          ).toFixed(2)
           : 0;
 
       res.json({
-
         total,
-
         approved,
-
         rejected,
-
         pending,
-
         percentage,
       });
 
@@ -229,54 +290,10 @@ const getStats =
     }
   };
 
-const getRecruiterApplications =
-  async (req, res) => {
-
-    try {
-
-      const applications =
-        await Application.find()
-
-          .populate(
-            "student"
-          )
-
-          .populate(
-            "company"
-          );
-
-      const filtered =
-        applications.filter(
-          (app) =>
-
-            app.company?.recruiter?.toString() ===
-            req.params.id
-        );
-
-      res.json(
-        filtered
-      );
-
-    } catch (error) {
-
-      res.status(500).json({
-        message:
-          error.message,
-      });
-    }
-  };
-
 module.exports = {
-
   applyToCompany,
-
   getApplications,
-
   getAllApplications,
-
   updateStatus,
-
   getStats,
-
-  getRecruiterApplications,
 };

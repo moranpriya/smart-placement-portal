@@ -14,11 +14,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Leaderboard from "./pages/Leaderboard";
 import Experiences from "./pages/Experiences";
 import ResumeBuilder from "./pages/ResumeBuilder";
-import RecruiterRegistration from "./pages/RecruiterRegister";
-import RecruiterLogin from "./pages/RecruiterLogin";
-import RecruiterDashboard from "./pages/RecruiterDashboard";
 import EditProfile from "./pages/EditProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 
 import bgImage from "./assets/college.jpg";
 
@@ -68,13 +66,10 @@ export default function App() {
   return (
 
     <BrowserRouter>
-
       <Routes>
-
         <Route
           element={<MainLayout />}
         >
-
           <Route
             path="/"
             element={<Home />}
@@ -102,9 +97,9 @@ export default function App() {
           <Route
             path="/admin"
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <AdminDashboard />
-              </ProtectedRoute>
+              </AdminRoute>
             }
           />
 
@@ -136,25 +131,6 @@ export default function App() {
           />
 
           <Route
-            path="/recruiter-register"
-            element={<RecruiterRegistration />}
-          />
-
-          <Route
-            path="/recruiter-login"
-            element={<RecruiterLogin />}
-          />
-
-          <Route
-            path="/recruiter"
-            element={
-              <ProtectedRoute>
-                <RecruiterDashboard />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
             path="/edit-profile"
             element={
               <ProtectedRoute>
@@ -164,14 +140,12 @@ export default function App() {
           />
 
           <Route
-            path="/recruiterLogin"
-            element={<RecruiterLogin />}
+            path="*"
+            element={<h1>404 Not Found</h1>}
           />
 
         </Route>
-
       </Routes>
-
     </BrowserRouter>
   );
 }

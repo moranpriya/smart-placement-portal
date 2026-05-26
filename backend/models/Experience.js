@@ -13,6 +13,7 @@ const experienceSchema =
 
       companyName: {
         type: String,
+        required: true,
       },
 
       role: {

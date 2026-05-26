@@ -9,7 +9,7 @@ import {
 
 import {
   useTheme,
-} from "../context/ThemeContext";
+} from "../context/useTheme";
 
 import API from "../services/api";
 

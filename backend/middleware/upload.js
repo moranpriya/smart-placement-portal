@@ -26,16 +26,37 @@ const storage =
           null,
 
           Date.now() +
-            "-" +
-            file.originalname
+          "-" +
+          file.originalname
         );
       },
   });
 
-const upload =
-  multer({
-    storage,
-  });
+const fileFilter =
+  (req, file, cb) => {
+
+    if (
+      file.mimetype ===
+      "application/pdf"
+    ) {
+
+      cb(null, true);
+
+    } else {
+
+      cb(
+        new Error(
+          "Only PDF allowed"
+        ),
+        false
+      );
+    }
+  };
+
+const upload = multer({
+  storage,
+  fileFilter,
+});
 
 module.exports =
   upload;

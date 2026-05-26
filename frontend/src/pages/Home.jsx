@@ -3,8 +3,8 @@ import {
 } from "react-router-dom";
 
 import {
-  useTheme,
-} from "../context/ThemeContext";
+    useTheme,
+} from "../context/useTheme";
 
 import collegeLogo from "../assets/collegeLogo.jpg";
 
@@ -627,23 +627,6 @@ const portalCards = [
 
     image:
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop",
-  },
-
-  {
-    title:
-      "Recruiter Zone",
-
-    description:
-      "Companies can register, post jobs and manage campus recruitment drives.",
-
-    button:
-      "Recruiter Login",
-
-    route:
-      "/recruiter-login",
-
-    image:
-      "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1200&auto=format&fit=crop",
   },
 
   {

@@ -15,6 +15,7 @@ const getCompanies =
       );
 
     } catch (error) {
+
       console.log(error);
 
       res.status(500).json({
@@ -24,56 +25,76 @@ const getCompanies =
     }
   };
 
-const addCompany = async (
-  req,
-  res
-) => {
+const addCompany =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const existingCompany =
-      await Company.findOne({
-        companyName:
-          req.body.companyName,
+      const existingCompany =
+        await Company.findOne({
 
-        role:
-          req.body.role,
-      });
+          companyName:
+            req.body.companyName,
 
-    if (
-      existingCompany
-    ) {
-
-      return res
-        .status(400)
-        .json({
-          message:
-            "Company already exists",
+          role:
+            req.body.role,
         });
-    }
 
-    console.log(req.body);
+      if (existingCompany) {
 
-    const company =
-      await Company.create(
-        req.body
+        return res
+          .status(400)
+          .json({
+            message:
+              "Company already exists",
+          });
+      }
+
+      console.log(req.body);
+
+      const company =
+        await Company.create({
+
+          companyName:
+            req.body.companyName,
+
+          role:
+            req.body.role,
+
+          package:
+            req.body.package,
+
+          minCGPA:
+            req.body.minCGPA,
+
+          allowedBranches:
+            req.body.allowedBranches,
+
+          deadline:
+            req.body.deadline,
+
+          description:
+            req.body.description,
+        });
+
+      res.status(201).json(
+        company
       );
 
-    res.status(201).json(
-      company
-    );
+    } catch (error) {
 
-  } catch (error) {
-    console.log(error);
+      console.log(error);
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
-};
+      res.status(500).json({
+        message:
+          error.message,
+      });
+    }
+  };
 
 module.exports = {
+
   getCompanies,
+
   addCompany,
 };

@@ -30,42 +30,52 @@ router.get(
             "student"
           )
 
+          .limit(10)
+
           .populate(
             "company"
           );
 
       const leaderboard =
-  placedStudents
+        placedStudents
 
-    .map(
-      (app) => ({
+          .map(
+            (app) => ({
 
-        _id:
-          app._id,
+              _id:
+                app._id,
 
-        name:
-          app.student?.name,
+              name:
+                app.student?.name,
 
-        branch:
-          app.student?.branch,
+              branch:
+                app.student?.branch,
 
-        company:
-          app.company?.companyName,
+              company:
+                app.company?.companyName,
 
-        package:
-          Number(
-            app.company?.package
-          ) || 0,
-      })
-    )
+              package:
+                Number(
+                  app.company?.package
+                ) || 0,
+            })
+          )
 
-    .sort(
-      (a, b) =>
-        b.package - a.package
-    );
+          .sort(
+            (a, b) =>
+              b.package - a.package
+          );
+
+      const rankedLeaderboard =
+        leaderboard.map(
+          (student, index) => ({
+            rank: index + 1,
+            ...student,
+          })
+        );
 
       res.json(
-        leaderboard
+        rankedLeaderboard
       );
 
     } catch (error) {

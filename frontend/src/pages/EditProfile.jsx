@@ -1,3 +1,5 @@
+import API from "../services/api";
+
 import {
   useState,
 } from "react";
@@ -45,23 +47,43 @@ export default function EditProfile() {
   };
 
   const handleSave =
-    () => {
+    async () => {
 
-      const updatedUser = {
-        ...storedUser,
-        ...formData,
-      };
+      try {
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(updatedUser)
-      );
+        const res =
+          await API.put(
 
-      alert(
-        "Profile Updated Successfully"
-      );
+            `/users/${storedUser._id}`,
 
-      navigate("/dashboard");
+            formData
+          );
+
+        localStorage.setItem(
+
+          "user",
+
+          JSON.stringify(
+            res.data
+          )
+        );
+
+        alert(
+          "Profile Updated Successfully"
+        );
+
+        navigate(
+          "/dashboard"
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+        alert(
+          "Update Failed"
+        );
+      }
     };
 
   return (

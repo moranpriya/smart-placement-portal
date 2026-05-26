@@ -29,13 +29,6 @@ const registerUser =
         cgpa,
         batch,
 
-        /* RECRUITER */
-
-        companyName,
-        hrName,
-        website,
-        companyType,
-
         /* COMMON */
 
         email,
@@ -103,7 +96,7 @@ const registerUser =
           "Welcome to DEC Placement Portal",
 
           `
-Hello ${user.name || user.companyName},
+Hello ${user.name},
 
 Welcome to DEC Placement Portal.
 
@@ -126,8 +119,8 @@ DEC Placement Cell
         jwt.sign(
 
           {
-            id:
-              user._id,
+            id: user._id,
+            role: user.role,
           },
 
           process.env.JWT_SECRET,
@@ -204,6 +197,8 @@ const loginUser =
           {
             id:
               user._id,
+            role:
+              user.role,
           },
 
           process.env.JWT_SECRET,

@@ -34,24 +34,34 @@ connectDB();
 
 const app = express();
 
+console.log("Server initialized");
+
 app.use(cors());
 
+console.log("CORS enabled");
+
 app.use(express.json());
+
+console.log("JSON parsing enabled");
 
 app.use(
   "/api/auth",
   require("./routes/authRoutes")
 );
 
+console.log("Auth routes set up");
+
 app.use(
   "/api/companies",
   require("./routes/companyRoutes")
 );
+console.log("Company routes set up");
 
 app.use(
   "/api/applications",
   require("./routes/applicationRoutes")
 );
+console.log("Application routes set up");
 
 app.use(
   "/uploads",
@@ -67,21 +77,25 @@ app.use(
   "/api/upload",
   require("./routes/uploadRoutes")
 );
+console.log("Upload routes set up");
 
 app.use(
   "/api/users",
   require("./routes/userRoutes")
 );
+console.log("User routes set up");
 
 app.use(
   "/api/experiences",
   require("./routes/experienceRoutes")
 );
+console.log("Experience routes set up");
 
 app.use(
   "/api/ai",
   aiRoutes
 );
+console.log("AI routes set up");
 
 app.use(
   "/api/leaderboard",
@@ -93,6 +107,11 @@ app.get("/", (req, res) => {
     "API Running"
   );
 });
+
+app.use(
+  "/uploads",
+  express.static("uploads")
+);
 
 const PORT =
   process.env.PORT || 5000;
